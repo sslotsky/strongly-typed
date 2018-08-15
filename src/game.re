@@ -20,6 +20,7 @@ type parcelModule = {
 [@bs.val] external parcelModule: parcelModule = "module";
 [@bs.send] external accept: (hot, unit) => unit = "accept";
 [@bs.scope "document"][@bs.val] external getCanvas: string => canvas = "getElementById";
+[@bs.scope "window"][@bs.val] external animate: (unit => unit) => unit = "requestAnimationFrame";
 [@bs.send] external getContext: (canvas, string) => context = "getContext";
 [@bs.send] external fillText: (context, string, float, float) => unit = "fillText";
 [@bs.send] external measureText: (context, string) => measurement = "measureText";
@@ -31,17 +32,57 @@ switch (parcelModule->hotGet) {
 };
 
 
+type word = {
+  text: string,
+  mutable x: float,
+  mutable y: float
+};
+
+type state = {
+  word: word,
+  input: string
+};
+
+let nextState = state => {
+  state.word.y = switch(state.word.y) {
+  | n when n > 300.0 => 0.0
+  | _ => state.word.y +. 1.0
+  };
+
+  state;
+}
+
 let canvas = getCanvas("canvas");
-Js.log(canvas);
-
 let context = canvas->getContext("2d");
-Js.log(context);
 
-context->clearRect(0, 0, 300, 300);
-context->fontSet("30px Arial");
-let start = 10.0;
-let continue = start +. context->measureText("Algol")->widthGet;
-context->fillStyleSet("red");
-context->fillText("Algol", start, 30.0);
-context->fillStyleSet("blue");
-context->fillText("ia", continue, 30.0);
+let rec paint = (state: state) => {
+  context->clearRect(0, 0, 300, 300);
+  context->fontSet("30px Arial");
+
+  let newState = state->nextState;
+  let {word, input} = newState;
+
+  let (matching, rest) = switch(String.sub(word.text, 0, String.length(input))) {
+  | s when s == input => (s, String.sub(word.text, String.length(input), String.length(word.text) - String.length(input)))
+  | _ => ("", word.text)
+  };
+
+  let continue = word.x +. context->measureText(matching)->widthGet;
+  context->fillStyleSet("red");
+  context->fillText(matching, word.x, word.y);
+  context->fillStyleSet("blue");
+  context->fillText(rest, continue, word.y);
+
+  animate(() => paint(state));
+};
+
+let initialState = {
+  word: {
+    text: "Algolia",
+    x: 10.0,
+    y: 30.0
+  },
+  input: "Al"
+};
+
+paint(initialState);

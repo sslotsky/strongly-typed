@@ -11,6 +11,32 @@ if (match !== undefined) {
   console.log("We are not hot");
 }
 
-console.log("Hello world, it's a song that we're singing");
+var canvas = document.getElementById("canvas");
 
+console.log(canvas);
+
+var context = canvas.getContext("2d");
+
+console.log(context);
+
+context.clearRect(0, 0, 300, 300);
+
+context.font = "30px Arial";
+
+var $$continue = 10.0 + context.measureText("Algol").width;
+
+context.fillStyle = "red";
+
+context.fillText("Algol", 10.0, 30.0);
+
+context.fillStyle = "blue";
+
+context.fillText("ia", $$continue, 30.0);
+
+var start = 10.0;
+
+exports.canvas = canvas;
+exports.context = context;
+exports.start = start;
+exports.$$continue = $$continue;
 /* match Not a pure module */

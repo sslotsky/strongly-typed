@@ -47,7 +47,7 @@ function nextState(state, ui) {
         }), state[/* words */0]);
   if (state[/* ticks */1] % 90 === 0) {
     var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */3], word);
+    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */4], word);
     var x = Random.$$float(max);
     state[/* words */0] = List.append(state[/* words */0], /* :: */[
           /* record */[
@@ -66,38 +66,43 @@ var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
-function ui_003(str) {
-  return context.measureText(str).width;
-}
-
 var ui = /* record */[
   /* height */600.0,
   /* width */600.0,
   /* fontSize */30,
-  ui_003
+  /* input */"",
+  /* calculateWidth */(function (str) {
+      return context.measureText(str).width;
+    })
 ];
 
+window.addEventListener("keypress", (function (e) {
+        ui[/* input */3] = ui[/* input */3] + e.key;
+        console.log(ui[/* input */3]);
+        return /* () */0;
+      }));
+
 function paint(state) {
-  context.clearRect(0, 0, 600, 600);
-  context.font = String(30) + "px Arial";
+  context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
+  context.font = String(ui[/* fontSize */2]) + "px Arial";
   var newState = nextState(state, ui);
   var words = newState[/* words */0];
-  var input = newState[/* input */2];
   List.iter((function (word) {
-          var s = $$String.sub(word[/* text */0], 0, input.length);
-          var match = s === input ? /* tuple */[
-              s,
-              $$String.sub(word[/* text */0], input.length, word[/* text */0].length - input.length | 0)
-            ] : /* tuple */[
+          var match = word[/* text */0];
+          var match$1 = ui[/* input */3].length;
+          var match$2 = match$1 > match.length || $$String.sub(match, 0, match$1) !== ui[/* input */3] ? /* tuple */[
               "",
               word[/* text */0]
+            ] : /* tuple */[
+              ui[/* input */3],
+              $$String.sub(match, match$1, match.length - match$1 | 0)
             ];
-          var matching = match[0];
+          var matching = match$2[0];
           var $$continue = word[/* x */1] + context.measureText(matching).width;
           context.fillStyle = "red";
           context.fillText(matching, word[/* x */1], word[/* y */2]);
           context.fillStyle = "blue";
-          context.fillText(match[1], $$continue, word[/* y */2]);
+          context.fillText(match$2[1], $$continue, word[/* y */2]);
           return /* () */0;
         }), words);
   window.requestAnimationFrame((function () {
@@ -108,8 +113,7 @@ function paint(state) {
 
 var initialState = /* record */[
   /* words : [] */0,
-  /* ticks */0,
-  /* input */"kub"
+  /* ticks */0
 ];
 
 paint(initialState);

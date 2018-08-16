@@ -2,6 +2,11 @@ type hot;
 type canvas;
 
 [@bs.deriving abstract]
+type event = {
+  key: string
+};
+
+[@bs.deriving abstract]
 type context = {
   mutable font: string,
   mutable fillStyle: string 
@@ -21,6 +26,7 @@ type parcelModule = {
 [@bs.send] external accept: (hot, unit) => unit = "accept";
 [@bs.scope "document"][@bs.val] external getCanvas: string => canvas = "getElementById";
 [@bs.scope "window"][@bs.val] external animate: (unit => unit) => unit = "requestAnimationFrame";
+[@bs.scope "window"][@bs.val] external listen: (string, event => unit) => unit = "addEventListener";
 [@bs.send] external getContext: (canvas, string) => context = "getContext";
 [@bs.send] external fillText: (context, string, float, float) => unit = "fillText";
 [@bs.send] external measureText: (context, string) => measurement = "measureText";
@@ -41,13 +47,13 @@ type word = {
 type state = {
   mutable words: list(word),
   mutable ticks: int,
-  mutable input: string
 };
 
 type ui = {
   height: float,
   width: float,
   fontSize: int,
+  mutable input: string,
   calculateWidth: string => float
 };
 
@@ -79,19 +85,26 @@ let ui = {
   height: 600.0,
   width: 600.0,
   fontSize: 30,
+  input: "",
   calculateWidth: str => context->measureText(str)->widthGet
 };
 
-let rec paint = (state: state) => {
+listen("keypress", (e) => {
+  ui.input = ui.input ++ e->keyGet;
+  Js.log(ui.input);
+});
+
+let rec paint = (state) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
   context->fontSet(string_of_int(ui.fontSize) ++ "px Arial");
 
   let newState = state->nextState(ui);
-  let {words, input} = newState;
+  let {words} = newState;
 
   List.iter(word => {
-    let (matching, rest) = switch(String.sub(word.text, 0, String.length(input))) {
-    | s when s == input => (s, String.sub(word.text, String.length(input), String.length(word.text) - String.length(input)))
+    let (matching, rest) = switch(word.text, String.length(ui.input)) {
+    | (text, length) when length > String.length(text) => ("", word.text)
+    | (text, length) when String.sub(text, 0, length) == ui.input => (ui.input, String.sub(text, length, String.length(text) - length))
     | _ => ("", word.text)
     };
 
@@ -108,8 +121,7 @@ let rec paint = (state: state) => {
 
 let initialState = {
   words: [],
-  ticks: 0,
-  input: "kub"
+  ticks: 0
 };
 
 paint(initialState);

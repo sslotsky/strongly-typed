@@ -39,15 +39,17 @@ type word = {
 };
 
 type state = {
-  word: word,
+  words: list(word),
   input: string
 };
 
 let nextState = state => {
-  state.word.y = switch(state.word.y) {
-  | n when n > 300.0 => 0.0
-  | _ => state.word.y +. 1.0
-  };
+  List.iter(word => {
+    word.y = switch(word.y) {
+    | n when n > 300.0 => 0.0
+    | _ => word.y +. 1.0
+    };
+  }, state.words);
 
   state;
 }
@@ -60,28 +62,35 @@ let rec paint = (state: state) => {
   context->fontSet("30px Arial");
 
   let newState = state->nextState;
-  let {word, input} = newState;
+  let {words, input} = newState;
 
-  let (matching, rest) = switch(String.sub(word.text, 0, String.length(input))) {
-  | s when s == input => (s, String.sub(word.text, String.length(input), String.length(word.text) - String.length(input)))
-  | _ => ("", word.text)
-  };
+  List.iter(word => {
+    let (matching, rest) = switch(String.sub(word.text, 0, String.length(input))) {
+    | s when s == input => (s, String.sub(word.text, String.length(input), String.length(word.text) - String.length(input)))
+    | _ => ("", word.text)
+    };
 
-  let continue = word.x +. context->measureText(matching)->widthGet;
-  context->fillStyleSet("red");
-  context->fillText(matching, word.x, word.y);
-  context->fillStyleSet("blue");
-  context->fillText(rest, continue, word.y);
+    let continue = word.x +. context->measureText(matching)->widthGet;
+    context->fillStyleSet("red");
+    context->fillText(matching, word.x, word.y);
+    context->fillStyleSet("blue");
+    context->fillText(rest, continue, word.y);
+  }, words);
+
 
   animate(() => paint(state));
 };
 
 let initialState = {
-  word: {
+  words: [{
     text: "Algolia",
     x: 10.0,
     y: 30.0
-  },
+  }, {
+    text: "Alibaba",
+    x: 150.0,
+    y: 30.0
+  }],
   input: "Al"
 };
 

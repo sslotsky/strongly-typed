@@ -47,6 +47,7 @@ type state = {
 type ui = {
   height: float,
   width: float,
+  fontSize: int,
   calculateWidth: string => float
 };
 
@@ -65,7 +66,7 @@ let nextState = (state, ui) => {
     let word = List.nth(words, Random.int(List.length(words) - 1));
     let max = ui.width -. ui.calculateWidth(word);
     let x = Random.float(max);
-    state.words = List.append(state.words, [{ text: word, x, y: 30.0 }]);
+    state.words = List.append(state.words, [{ text: word, x, y: float_of_int(ui.fontSize) }]);
   };
 
   state.ticks = state.ticks + 1;
@@ -77,12 +78,13 @@ let context = canvas->getContext("2d");
 let ui = {
   height: 600.0,
   width: 600.0,
+  fontSize: 30,
   calculateWidth: str => context->measureText(str)->widthGet
 };
 
 let rec paint = (state: state) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
-  context->fontSet("30px Arial");
+  context->fontSet(string_of_int(ui.fontSize) ++ "px Arial");
 
   let newState = state->nextState(ui);
   let {words, input} = newState;

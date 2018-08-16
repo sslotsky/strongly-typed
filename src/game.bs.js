@@ -47,13 +47,13 @@ function nextState(state, ui) {
         }), state[/* words */0]);
   if (state[/* ticks */1] % 90 === 0) {
     var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */2], word);
+    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */3], word);
     var x = Random.$$float(max);
     state[/* words */0] = List.append(state[/* words */0], /* :: */[
           /* record */[
             /* text */word,
             /* x */x,
-            /* y */30.0
+            /* y */ui[/* fontSize */2]
           ],
           /* [] */0
         ]);
@@ -66,19 +66,20 @@ var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
-function ui_002(str) {
+function ui_003(str) {
   return context.measureText(str).width;
 }
 
 var ui = /* record */[
   /* height */600.0,
   /* width */600.0,
-  ui_002
+  /* fontSize */30,
+  ui_003
 ];
 
 function paint(state) {
   context.clearRect(0, 0, 600, 600);
-  context.font = "30px Arial";
+  context.font = String(30) + "px Arial";
   var newState = nextState(state, ui);
   var words = newState[/* words */0];
   var input = newState[/* input */2];

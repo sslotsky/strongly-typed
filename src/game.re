@@ -39,29 +39,52 @@ type word = {
 };
 
 type state = {
-  words: list(word),
-  input: string
+  mutable words: list(word),
+  mutable ticks: int,
+  mutable input: string
 };
 
-let nextState = state => {
+type ui = {
+  height: float,
+  width: float,
+  calculateWidth: string => float
+};
+
+let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform"];
+
+let nextState = (state, ui) => {
   List.iter(word => {
-    word.y = switch(word.y) {
-    | n when n > 300.0 => 0.0
-    | _ => word.y +. 1.0
+    if (word.y > ui.height) {
+      state.words = List.filter(w => w != word, state.words);
+    } else {
+      word.y = word.y +. 1.0;
     };
   }, state.words);
 
+  if (state.ticks mod 90 == 0) {
+    let word = List.nth(words, Random.int(List.length(words) - 1));
+    let max = ui.width -. ui.calculateWidth(word);
+    let x = Random.float(max);
+    state.words = List.append(state.words, [{ text: word, x, y: 30.0 }]);
+  };
+
+  state.ticks = state.ticks + 1;
   state;
-}
+};
 
 let canvas = getCanvas("canvas");
 let context = canvas->getContext("2d");
+let ui = {
+  height: 600.0,
+  width: 600.0,
+  calculateWidth: str => context->measureText(str)->widthGet
+};
 
 let rec paint = (state: state) => {
-  context->clearRect(0, 0, 300, 300);
+  context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
   context->fontSet("30px Arial");
 
-  let newState = state->nextState;
+  let newState = state->nextState(ui);
   let {words, input} = newState;
 
   List.iter(word => {
@@ -82,16 +105,9 @@ let rec paint = (state: state) => {
 };
 
 let initialState = {
-  words: [{
-    text: "Algolia",
-    x: 10.0,
-    y: 30.0
-  }, {
-    text: "Alibaba",
-    x: 150.0,
-    y: 30.0
-  }],
-  input: "Al"
+  words: [],
+  ticks: 0,
+  input: "kub"
 };
 
 paint(initialState);

@@ -2,7 +2,10 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var Curry = require("bs-platform/lib/js/curry.js");
+var Random = require("bs-platform/lib/js/random.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 var match = module.hot;
@@ -13,12 +16,49 @@ if (match !== undefined) {
   console.log("We are not hot");
 }
 
-function nextState(state) {
+var words = /* :: */[
+  "Logging",
+  /* :: */[
+    "Memory Store",
+    /* :: */[
+      "postgresql",
+      /* :: */[
+        "kubernetes",
+        /* :: */[
+          "terraform",
+          /* [] */0
+        ]
+      ]
+    ]
+  ]
+];
+
+function nextState(state, ui) {
   List.iter((function (word) {
-          var n = word[/* y */2];
-          word[/* y */2] = n > 300.0 ? 0.0 : word[/* y */2] + 1.0;
-          return /* () */0;
+          if (word[/* y */2] > ui[/* height */0]) {
+            state[/* words */0] = List.filter((function (w) {
+                      return Caml_obj.caml_notequal(w, word);
+                    }))(state[/* words */0]);
+            return /* () */0;
+          } else {
+            word[2] += 1.0;
+            return /* () */0;
+          }
         }), state[/* words */0]);
+  if (state[/* ticks */1] % 90 === 0) {
+    var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
+    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */2], word);
+    var x = Random.$$float(max);
+    state[/* words */0] = List.append(state[/* words */0], /* :: */[
+          /* record */[
+            /* text */word,
+            /* x */x,
+            /* y */30.0
+          ],
+          /* [] */0
+        ]);
+  }
+  state[/* ticks */1] = state[/* ticks */1] + 1 | 0;
   return state;
 }
 
@@ -26,11 +66,22 @@ var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
+function ui_002(str) {
+  return context.measureText(str).width;
+}
+
+var ui = /* record */[
+  /* height */600.0,
+  /* width */600.0,
+  ui_002
+];
+
 function paint(state) {
-  context.clearRect(0, 0, 300, 300);
+  context.clearRect(0, 0, 600, 600);
   context.font = "30px Arial";
-  var newState = nextState(state);
-  var input = newState[/* input */1];
+  var newState = nextState(state, ui);
+  var words = newState[/* words */0];
+  var input = newState[/* input */2];
   List.iter((function (word) {
           var s = $$String.sub(word[/* text */0], 0, input.length);
           var match = s === input ? /* tuple */[
@@ -47,39 +98,26 @@ function paint(state) {
           context.fillStyle = "blue";
           context.fillText(match[1], $$continue, word[/* y */2]);
           return /* () */0;
-        }), newState[/* words */0]);
+        }), words);
   window.requestAnimationFrame((function () {
           return paint(state);
         }));
   return /* () */0;
 }
 
-var initialState_000 = /* words : :: */[
-  /* record */[
-    /* text */"Algolia",
-    /* x */10.0,
-    /* y */30.0
-  ],
-  /* :: */[
-    /* record */[
-      /* text */"Alibaba",
-      /* x */150.0,
-      /* y */30.0
-    ],
-    /* [] */0
-  ]
-];
-
 var initialState = /* record */[
-  initialState_000,
-  /* input */"Al"
+  /* words : [] */0,
+  /* ticks */0,
+  /* input */"kub"
 ];
 
 paint(initialState);
 
+exports.words = words;
 exports.nextState = nextState;
 exports.canvas = canvas;
 exports.context = context;
+exports.ui = ui;
 exports.paint = paint;
 exports.initialState = initialState;
 /* match Not a pure module */

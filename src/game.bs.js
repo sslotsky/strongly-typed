@@ -4,8 +4,9 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Random = require("bs-platform/lib/js/random.js");
-var $$String = require("bs-platform/lib/js/string.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var Canvas$StronglyTyped = require("./canvas.bs.js");
+var Common$StronglyTyped = require("./common.bs.js");
 
 var match = module.hot;
 
@@ -80,10 +81,6 @@ var words = /* :: */[
   ]
 ];
 
-function startsWith(input, word) {
-  return new RegExp("^" + input).test(word[/* text */0]);
-}
-
 function nextState(state, ui) {
   var match = List.partition((function (w) {
           return w[/* text */0] === Curry._1(ui[/* input */3], /* () */0);
@@ -97,7 +94,7 @@ function nextState(state, ui) {
   if (List.length(captured) <= 0) {
     var partial_arg = Curry._1(ui[/* input */3], /* () */0);
     tmp = !List.exists((function (param) {
-            return startsWith(partial_arg, param);
+            return Common$StronglyTyped.startsWith(partial_arg, param);
           }), match$1[1]);
   }
   if (tmp) {
@@ -130,79 +127,14 @@ function nextState(state, ui) {
   return state;
 }
 
-var canvas = document.getElementById("canvas");
-
-var context = canvas.getContext("2d");
-
-function initUi(height, width, fontSize) {
-  var input = /* record */[/* contents */""];
-  var clearInput = function () {
-    input[0] = "";
-    return /* () */0;
-  };
-  window.addEventListener("keypress", (function (e) {
-          input[0] = input[0] + e.key;
-          return /* () */0;
-        }));
-  return /* record */[
-          /* height */height,
-          /* width */width,
-          /* fontSize */fontSize,
-          /* input */(function () {
-              return input[0];
-            }),
-          /* clearInput */clearInput,
-          /* calculateWidth */(function (str) {
-              return context.measureText(str).width;
-            })
-        ];
-}
-
-var ui = initUi(600.0, 600.0, 30);
-
-function paint(state) {
-  context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
-  context.font = String(ui[/* fontSize */2]) + "px Arial";
-  var newState = nextState(state, ui);
-  List.iter((function (word) {
-          var match = startsWith(Curry._1(ui[/* input */3], /* () */0), word);
-          var match$1 = Curry._1(ui[/* input */3], /* () */0).length;
-          var match$2 = word[/* text */0].length;
-          var match$3 = match ? /* tuple */[
-              Curry._1(ui[/* input */3], /* () */0),
-              $$String.sub(word[/* text */0], match$1, match$2 - match$1 | 0)
-            ] : /* tuple */[
-              "",
-              word[/* text */0]
-            ];
-          var matching = match$3[0];
-          var $$continue = word[/* x */1] + context.measureText(matching).width;
-          context.fillStyle = "red";
-          context.fillText(matching, word[/* x */1], word[/* y */2]);
-          context.fillStyle = "blue";
-          context.fillText(match$3[1], $$continue, word[/* y */2]);
-          return /* () */0;
-        }), newState[/* words */0]);
-  window.requestAnimationFrame((function () {
-          return paint(state);
-        }));
-  return /* () */0;
-}
-
 var initialState = /* record */[
   /* words : [] */0,
   /* ticks */0
 ];
 
-paint(initialState);
+Canvas$StronglyTyped.paint(initialState, nextState);
 
 exports.words = words;
-exports.startsWith = startsWith;
 exports.nextState = nextState;
-exports.canvas = canvas;
-exports.context = context;
-exports.initUi = initUi;
-exports.ui = ui;
-exports.paint = paint;
 exports.initialState = initialState;
 /* match Not a pure module */

@@ -70,7 +70,7 @@ let nextState = (state, ui) => {
   };
 
   List.iter(word => {
-    if (word.y > ui.height) {
+    if (word->List.mem(captured) || word->List.mem(crashed)) {
       state.words = List.filter(w => w != word, state.words);
     } else {
       word.y = word.y +. 1.0;

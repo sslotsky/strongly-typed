@@ -41,11 +41,13 @@ function nextState(state, ui) {
   var match = List.partition((function (w) {
           return w[/* text */0] === ui[/* input */3];
         }), state[/* words */0]);
+  var captured = match[0];
   var match$1 = List.partition((function (w) {
           return w[/* y */2] > ui[/* height */0];
         }), match[1]);
+  var crashed = match$1[0];
   var tmp = true;
-  if (List.length(match[0]) <= 0) {
+  if (List.length(captured) <= 0) {
     var partial_arg = ui[/* input */3];
     tmp = !List.exists((function (param) {
             return startsWith(partial_arg, param);
@@ -55,7 +57,7 @@ function nextState(state, ui) {
     ui[/* input */3] = "";
   }
   List.iter((function (word) {
-          if (word[/* y */2] > ui[/* height */0]) {
+          if (List.mem(word, captured) || List.mem(word, crashed)) {
             state[/* words */0] = List.filter((function (w) {
                       return Caml_obj.caml_notequal(w, word);
                     }))(state[/* words */0]);

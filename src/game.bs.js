@@ -39,7 +39,7 @@ function startsWith(input, word) {
 
 function nextState(state, ui) {
   var match = List.partition((function (w) {
-          return w[/* text */0] === ui[/* input */3];
+          return w[/* text */0] === Curry._1(ui[/* input */3], /* () */0);
         }), state[/* words */0]);
   var captured = match[0];
   var match$1 = List.partition((function (w) {
@@ -48,13 +48,13 @@ function nextState(state, ui) {
   var crashed = match$1[0];
   var tmp = true;
   if (List.length(captured) <= 0) {
-    var partial_arg = ui[/* input */3];
+    var partial_arg = Curry._1(ui[/* input */3], /* () */0);
     tmp = !List.exists((function (param) {
             return startsWith(partial_arg, param);
           }), match$1[1]);
   }
   if (tmp) {
-    ui[/* input */3] = "";
+    Curry._1(ui[/* clearInput */4], /* () */0);
   }
   List.iter((function (word) {
           if (List.mem(word, captured) || List.mem(word, crashed)) {
@@ -69,7 +69,7 @@ function nextState(state, ui) {
         }), state[/* words */0]);
   if (state[/* ticks */1] % 90 === 0) {
     var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */4], word);
+    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
     state[/* words */0] = List.append(state[/* words */0], /* :: */[
           /* record */[
             /* text */word,
@@ -87,20 +87,31 @@ var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
-var ui = /* record */[
-  /* height */600.0,
-  /* width */600.0,
-  /* fontSize */30,
-  /* input */"",
-  /* calculateWidth */(function (str) {
-      return context.measureText(str).width;
-    })
-];
+function initUi() {
+  var input = /* record */[/* contents */""];
+  var clearInput = function () {
+    input[0] = "";
+    return /* () */0;
+  };
+  window.addEventListener("keypress", (function (e) {
+          input[0] = input[0] + e.key;
+          return /* () */0;
+        }));
+  return /* record */[
+          /* height */600.0,
+          /* width */600.0,
+          /* fontSize */30,
+          /* input */(function () {
+              return input[0];
+            }),
+          /* clearInput */clearInput,
+          /* calculateWidth */(function (str) {
+              return context.measureText(str).width;
+            })
+        ];
+}
 
-window.addEventListener("keypress", (function (e) {
-        ui[/* input */3] = ui[/* input */3] + e.key;
-        return /* () */0;
-      }));
+var ui = initUi(/* () */0);
 
 function paint(state) {
   context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
@@ -108,11 +119,11 @@ function paint(state) {
   var newState = nextState(state, ui);
   var words = newState[/* words */0];
   List.iter((function (word) {
-          var match = startsWith(ui[/* input */3], word);
-          var match$1 = ui[/* input */3].length;
+          var match = startsWith(Curry._1(ui[/* input */3], /* () */0), word);
+          var match$1 = Curry._1(ui[/* input */3], /* () */0).length;
           var match$2 = word[/* text */0].length;
           var match$3 = match ? /* tuple */[
-              ui[/* input */3],
+              Curry._1(ui[/* input */3], /* () */0),
               $$String.sub(word[/* text */0], match$1, match$2 - match$1 | 0)
             ] : /* tuple */[
               "",
@@ -144,6 +155,7 @@ exports.startsWith = startsWith;
 exports.nextState = nextState;
 exports.canvas = canvas;
 exports.context = context;
+exports.initUi = initUi;
 exports.ui = ui;
 exports.paint = paint;
 exports.initialState = initialState;

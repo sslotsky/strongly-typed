@@ -53,7 +53,8 @@ type ui = {
   height: float,
   width: float,
   fontSize: int,
-  mutable input: string,
+  input: unit => string,
+  clearInput: unit => unit,
   calculateWidth: string => float
 };
 
@@ -62,11 +63,11 @@ let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform"]
 let startsWith = (input, word) => Js.Re.test(word.text, Js.Re.fromString("^" ++ input));
 
 let nextState = (state, ui) => {
-  let (captured, falling) = List.partition(w => w.text == ui.input, state.words);
+  let (captured, falling) = List.partition(w => w.text == ui.input(), state.words);
   let (crashed, remaining) = List.partition(w => w.y > ui.height, falling);
 
-  if (List.length(captured) > 0 || !List.exists(startsWith(ui.input), remaining)) {
-    ui.input = "";
+  if (List.length(captured) > 0 || !List.exists(startsWith(ui.input()), remaining)) {
+    ui.clearInput();
   };
 
   List.iter(word => {
@@ -89,17 +90,23 @@ let nextState = (state, ui) => {
 
 let canvas = getCanvas("canvas");
 let context = canvas->getContext("2d");
-let ui = {
-  height: 600.0,
-  width: 600.0,
-  fontSize: 30,
-  input: "",
-  calculateWidth: str => context->measureText(str)->widthGet
+
+let initUi = () => {
+  let input = ref("");
+
+  let clearInput = () => {
+    input := "";
+  };
+
+  listen("keypress", (e) => {
+    input := (input^) ++ e->keyGet;
+  });
+
+  { height: 600.0, width: 600.0, fontSize: 30, input: () => input^, clearInput, calculateWidth: str => context->measureText(str)->widthGet };
+
 };
 
-listen("keypress", (e) => {
-  ui.input = ui.input ++ e->keyGet;
-});
+let ui = initUi();
 
 let rec paint = (state) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
@@ -109,8 +116,8 @@ let rec paint = (state) => {
   let {words} = newState;
 
   List.iter(word => {
-    let (matching, rest) = switch(startsWith(ui.input, word), String.length(ui.input), String.length(word.text)) {
-    | (true, inputLength, wordLength) => (ui.input, String.sub(word.text, inputLength, wordLength - inputLength))
+    let (matching, rest) = switch(startsWith(ui.input(), word), String.length(ui.input()), String.length(word.text)) {
+    | (true, inputLength, wordLength) => (ui.input(), String.sub(word.text, inputLength, wordLength - inputLength))
     | _ => ("", word.text)
     };
 

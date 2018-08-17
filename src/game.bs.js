@@ -87,7 +87,7 @@ var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
-function initUi() {
+function initUi(height, width, fontSize) {
   var input = /* record */[/* contents */""];
   var clearInput = function () {
     input[0] = "";
@@ -98,9 +98,9 @@ function initUi() {
           return /* () */0;
         }));
   return /* record */[
-          /* height */600.0,
-          /* width */600.0,
-          /* fontSize */30,
+          /* height */height,
+          /* width */width,
+          /* fontSize */fontSize,
           /* input */(function () {
               return input[0];
             }),
@@ -111,7 +111,7 @@ function initUi() {
         ];
 }
 
-var ui = initUi(/* () */0);
+var ui = initUi(600.0, 600.0, 30);
 
 function paint(state) {
   context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);

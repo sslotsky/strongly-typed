@@ -91,7 +91,7 @@ let nextState = (state, ui) => {
 let canvas = getCanvas("canvas");
 let context = canvas->getContext("2d");
 
-let initUi = () => {
+let initUi = (height, width, fontSize) => {
   let input = ref("");
 
   let clearInput = () => {
@@ -102,11 +102,18 @@ let initUi = () => {
     input := (input^) ++ e->keyGet;
   });
 
-  { height: 600.0, width: 600.0, fontSize: 30, input: () => input^, clearInput, calculateWidth: str => context->measureText(str)->widthGet };
+  {
+    height,
+    width,
+    fontSize,
+    input: () => input^,
+    clearInput,
+    calculateWidth: str => context->measureText(str)->widthGet
+  };
 
 };
 
-let ui = initUi();
+let ui = initUi(600.0, 600.0, 30);
 
 let rec paint = (state) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));

@@ -58,9 +58,9 @@ type ui = {
   calculateWidth: string => float
 };
 
-let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform"];
+let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
 
-let startsWith = (input, word) => Js.Re.test(word.text, Js.Re.fromString("^" ++ input));
+let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);
 
 let nextState = (state, ui) => {
   let (captured, falling) = List.partition(w => w.text == ui.input(), state.words);
@@ -70,13 +70,14 @@ let nextState = (state, ui) => {
     ui.clearInput();
   };
 
-  List.iter(word => {
+  state.words = List.fold_left((words, word) => {
     if (word->List.mem(captured) || word->List.mem(crashed)) {
-      state.words = List.filter(w => w != word, state.words);
+      words;
     } else {
-      word.y = word.y +. 1.0;
+      word.y = word.y +. 1.5;
+      List.append(words, [word]);
     };
-  }, state.words);
+  }, [], state.words);
 
   if (state.ticks mod 90 == 0) {
     let word = List.nth(words, Random.int(List.length(words) - 1));
@@ -120,7 +121,6 @@ let rec paint = (state) => {
   context->fontSet(string_of_int(ui.fontSize) ++ "px Arial");
 
   let newState = state->nextState(ui);
-  let {words} = newState;
 
   List.iter(word => {
     let (matching, rest) = switch(startsWith(ui.input(), word), String.length(ui.input()), String.length(word.text)) {
@@ -133,7 +133,7 @@ let rec paint = (state) => {
     context->fillText(matching, word.x, word.y);
     context->fillStyleSet("blue");
     context->fillText(rest, continue, word.y);
-  }, words);
+  }, newState.words);
 
 
   animate(() => paint(state));

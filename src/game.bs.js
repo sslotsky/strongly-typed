@@ -5,7 +5,6 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Random = require("bs-platform/lib/js/random.js");
 var $$String = require("bs-platform/lib/js/string.js");
-var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 var match = module.hot;
@@ -26,7 +25,55 @@ var words = /* :: */[
         "kubernetes",
         /* :: */[
           "terraform",
-          /* [] */0
+          /* :: */[
+            "mysql",
+            /* :: */[
+              "serverless",
+              /* :: */[
+                "containerization",
+                /* :: */[
+                  "scalability",
+                  /* :: */[
+                    "Redis",
+                    /* :: */[
+                      "RabbitMQ",
+                      /* :: */[
+                        "machine learning",
+                        /* :: */[
+                          "analytics",
+                          /* :: */[
+                            "Optimization",
+                            /* :: */[
+                              "CMS",
+                              /* :: */[
+                                "Elastic",
+                                /* :: */[
+                                  "Algolia",
+                                  /* :: */[
+                                    "Jaws",
+                                    /* :: */[
+                                      "Timber",
+                                      /* :: */[
+                                        "Iron",
+                                        /* :: */[
+                                          "Piio",
+                                          /* [] */0
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
         ]
       ]
     ]
@@ -56,17 +103,17 @@ function nextState(state, ui) {
   if (tmp) {
     Curry._1(ui[/* clearInput */4], /* () */0);
   }
-  List.iter((function (word) {
+  state[/* words */0] = List.fold_left((function (words, word) {
           if (List.mem(word, captured) || List.mem(word, crashed)) {
-            state[/* words */0] = List.filter((function (w) {
-                      return Caml_obj.caml_notequal(w, word);
-                    }))(state[/* words */0]);
-            return /* () */0;
+            return words;
           } else {
-            word[2] += 1.0;
-            return /* () */0;
+            word[2] += 1.5;
+            return List.append(words, /* :: */[
+                        word,
+                        /* [] */0
+                      ]);
           }
-        }), state[/* words */0]);
+        }), /* [] */0, state[/* words */0]);
   if (state[/* ticks */1] % 90 === 0) {
     var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
     var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
@@ -117,7 +164,6 @@ function paint(state) {
   context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
   context.font = String(ui[/* fontSize */2]) + "px Arial";
   var newState = nextState(state, ui);
-  var words = newState[/* words */0];
   List.iter((function (word) {
           var match = startsWith(Curry._1(ui[/* input */3], /* () */0), word);
           var match$1 = Curry._1(ui[/* input */3], /* () */0).length;
@@ -136,7 +182,7 @@ function paint(state) {
           context.fillStyle = "blue";
           context.fillText(match$3[1], $$continue, word[/* y */2]);
           return /* () */0;
-        }), words);
+        }), newState[/* words */0]);
   window.requestAnimationFrame((function () {
           return paint(state);
         }));

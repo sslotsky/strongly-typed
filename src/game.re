@@ -59,7 +59,16 @@ type ui = {
 
 let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform"];
 
+let startsWith = (input, word) => Js.Re.test(word.text, Js.Re.fromString("^" ++ input));
+
 let nextState = (state, ui) => {
+  let (captured, falling) = List.partition(w => w.text == ui.input, state.words);
+  let (crashed, remaining) = List.partition(w => w.y > ui.height, falling);
+
+  if (List.length(captured) > 0 || !List.exists(startsWith(ui.input), remaining)) {
+    ui.input = "";
+  };
+
   List.iter(word => {
     if (word.y > ui.height) {
       state.words = List.filter(w => w != word, state.words);
@@ -71,8 +80,7 @@ let nextState = (state, ui) => {
   if (state.ticks mod 90 == 0) {
     let word = List.nth(words, Random.int(List.length(words) - 1));
     let max = ui.width -. ui.calculateWidth(word);
-    let x = Random.float(max);
-    state.words = List.append(state.words, [{ text: word, x, y: float_of_int(ui.fontSize) }]);
+    state.words = List.append(state.words, [{ text: word, x: Random.float(max), y: float_of_int(ui.fontSize) }]);
   };
 
   state.ticks = state.ticks + 1;
@@ -91,7 +99,6 @@ let ui = {
 
 listen("keypress", (e) => {
   ui.input = ui.input ++ e->keyGet;
-  Js.log(ui.input);
 });
 
 let rec paint = (state) => {
@@ -102,9 +109,8 @@ let rec paint = (state) => {
   let {words} = newState;
 
   List.iter(word => {
-    let (matching, rest) = switch(word.text, String.length(ui.input)) {
-    | (text, length) when length > String.length(text) => ("", word.text)
-    | (text, length) when String.sub(text, 0, length) == ui.input => (ui.input, String.sub(text, length, String.length(text) - length))
+    let (matching, rest) = switch(startsWith(ui.input, word), String.length(ui.input), String.length(word.text)) {
+    | (true, inputLength, wordLength) => (ui.input, String.sub(word.text, inputLength, wordLength - inputLength))
     | _ => ("", word.text)
     };
 

@@ -111,6 +111,12 @@ function nextState(state, ui) {
                       ]);
           }
         }), /* [] */0, state[/* words */0]);
+  state[/* crashSites */2] = List.append(state[/* crashSites */2], List.map((function (word) {
+              return /* record */[
+                      /* left */word[/* x */1],
+                      /* right */word[/* x */1] + Curry._1(ui[/* calculateWidth */5], word[/* text */0])
+                    ];
+            }), crashed));
   if (state[/* ticks */1] % 90 === 0) {
     var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
     var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
@@ -129,7 +135,8 @@ function nextState(state, ui) {
 
 var initialState = /* record */[
   /* words : [] */0,
-  /* ticks */0
+  /* ticks */0,
+  /* crashSites : [] */0
 ];
 
 Canvas$StronglyTyped.paint(initialState, nextState);

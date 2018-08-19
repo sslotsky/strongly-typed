@@ -59,15 +59,28 @@ function paint(state, nextState) {
           context.fillText(match$3[1], $$continue, word[/* y */2]);
           return /* () */0;
         }), newState[/* words */0]);
+  context.fillStyle = "orange";
+  context.fillRect(20.0, ui[/* height */0] - 5.0, ui[/* width */1] - 20.0, 5.0);
+  context.fillStyle = "white";
+  List.iter((function (site) {
+          context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
+          return /* () */0;
+        }), state[/* crashSites */2]);
   window.requestAnimationFrame((function () {
           return paint(state, nextState);
         }));
   return /* () */0;
 }
 
+var baseMargin = 20.0;
+
+var baseHeight = 5.0;
+
 exports.canvas = canvas;
 exports.context = context;
 exports.initUi = initUi;
 exports.ui = ui;
+exports.baseMargin = baseMargin;
+exports.baseHeight = baseHeight;
 exports.paint = paint;
 /* canvas Not a pure module */

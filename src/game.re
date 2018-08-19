@@ -16,7 +16,6 @@ switch (parcelModule->hotGet) {
 | _ => Js.log("We are not hot")
 };
 
-
 let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
 
 let nextState = (state, ui) => {
@@ -36,6 +35,11 @@ let nextState = (state, ui) => {
     };
   }, [], state.words);
 
+  state.crashSites = List.append(state.crashSites, List.map(word => {
+    left: word.x,
+    right: word.x +. ui.calculateWidth(word.text)
+  }, crashed));
+
   if (state.ticks mod 90 == 0) {
     let word = List.nth(words, Random.int(List.length(words) - 1));
     let max = ui.width -. ui.calculateWidth(word);
@@ -48,7 +52,8 @@ let nextState = (state, ui) => {
 
 let initialState = {
   words: [],
-  ticks: 0
+  ticks: 0,
+  crashSites: []
 };
 
 paint(initialState, nextState);

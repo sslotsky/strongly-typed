@@ -8,8 +8,8 @@ let crashSite = () => {
 
     let rightSide = switch(rightSide) {
     | [s] when site.right >= s.left => [{ left: site.left, right: max(site.right, s.right) }]
-    | [s, ...rest] when s.right >= site.left => List.append([{ left: s.left, right: max(site.right, s.right) }], rest)
-    | _ => List.append([site], rightSide)
+    | [s, ...rest] when site.right >= s.left => List.append([{ left: site.left, right: max(site.right, s.right) }], rest)
+    | _ => [site, ...rightSide]
     };
 
     let site = List.hd(rightSide);
@@ -24,8 +24,6 @@ let crashSite = () => {
     | tail => List.append(leftSide, tail)
     | exception Failure(_) => leftSide
     };
-
-    Js.log(List.length(sites^));
   };
 
   { crash, sites: () => sites^ };

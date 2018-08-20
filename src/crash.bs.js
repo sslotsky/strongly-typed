@@ -30,23 +30,23 @@ function crashSite() {
         ];
       }
       if (exit === 1) {
-        rightSide$1 = s[/* right */1] >= site[/* left */0] ? List.append(/* :: */[
+        rightSide$1 = site[/* right */1] >= s[/* left */0] ? List.append(/* :: */[
                 /* record */[
-                  /* left */s[/* left */0],
+                  /* left */site[/* left */0],
                   /* right */Caml_primitive.caml_float_max(site[/* right */1], s[/* right */1])
                 ],
                 /* [] */0
-              ], rest) : List.append(/* :: */[
-                site,
-                /* [] */0
-              ], rightSide);
+              ], rest) : /* :: */[
+            site,
+            rightSide
+          ];
       }
       
     } else {
-      rightSide$1 = List.append(/* :: */[
-            site,
-            /* [] */0
-          ], rightSide);
+      rightSide$1 = /* :: */[
+        site,
+        rightSide
+      ];
     }
     var site$1 = List.hd(rightSide$1);
     var match$1 = List.rev(leftSide);
@@ -104,7 +104,6 @@ function crashSite() {
       tmp = List.append(leftSide$1, tail);
     }
     sites[0] = tmp;
-    console.log(List.length(sites[0]));
     return /* () */0;
   };
   return /* record */[

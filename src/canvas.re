@@ -67,6 +67,8 @@ let (baseMargin, baseHeight) = (30.0, 5.0);
 let rec paint = (state, nextState) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
   context->fontSet(string_of_int(ui.fontSize) ++ "px Arial");
+  context->fillStyleSet("black");
+  context->fillRect(0.0, 0.0, ui.width, ui.height);
 
   let newState = state->nextState(ui);
 
@@ -84,9 +86,9 @@ let rec paint = (state, nextState) => {
   }, newState.words);
 
   context->fillStyleSet("orange");
-  context->fillRect(baseMargin, ui.height -. baseHeight, ui.width -. baseMargin, baseHeight);
+  context->fillRect(baseMargin, ui.height -. baseHeight, ui.width -. baseMargin *. 2.0, baseHeight);
 
-  context->fillStyleSet("white");
+  context->fillStyleSet("black");
   List.iter(site => {
     context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
   }, state.crashCollector.sites());

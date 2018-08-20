@@ -38,6 +38,8 @@ var ui = initUi(600.0, 600.0, 30);
 function paint(state, nextState) {
   context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
   context.font = String(ui[/* fontSize */2]) + "px Arial";
+  context.fillStyle = "black";
+  context.fillRect(0.0, 0.0, ui[/* width */1], ui[/* height */0]);
   var newState = Curry._2(nextState, state, ui);
   List.iter((function (word) {
           var match = Common$StronglyTyped.startsWith(Curry._1(ui[/* input */3], /* () */0), word);
@@ -59,8 +61,8 @@ function paint(state, nextState) {
           return /* () */0;
         }), newState[/* words */0]);
   context.fillStyle = "orange";
-  context.fillRect(30.0, ui[/* height */0] - 5.0, ui[/* width */1] - 30.0, 5.0);
-  context.fillStyle = "white";
+  context.fillRect(30.0, ui[/* height */0] - 5.0, ui[/* width */1] - 30.0 * 2.0, 5.0);
+  context.fillStyle = "black";
   List.iter((function (site) {
           context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
           return /* () */0;

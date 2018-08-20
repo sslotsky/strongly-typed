@@ -35,10 +35,9 @@ let nextState = (state, ui) => {
     };
   }, [], state.words);
 
-  state.crashSites = List.append(state.crashSites, List.map(word => {
-    left: word.x,
-    right: word.x +. ui.calculateWidth(word.text)
-  }, crashed));
+  List.iter(word => {
+    state.crashCollector.crash({ left: word.x, right: word.x +. ui.calculateWidth(word.text) });
+  }, crashed);
 
   if (state.ticks mod 90 == 0) {
     let word = List.nth(words, Random.int(List.length(words) - 1));
@@ -53,7 +52,7 @@ let nextState = (state, ui) => {
 let initialState = {
   words: [],
   ticks: 0,
-  crashSites: []
+  crashCollector: Crash.crashSite()
 };
 
 paint(initialState, nextState);

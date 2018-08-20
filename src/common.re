@@ -5,14 +5,20 @@ type word = {
 };
 
 type crashSite = {
-    left: float,
-    right: float
+  left: float,
+  right: float
+};
+
+type crashCollector = {
+  crash: crashSite => unit,
+  sites: unit => list(crashSite)
 };
 
 type state = {
   mutable words: list(word),
   mutable ticks: int,
-  mutable crashSites: list(crashSite)
+  /* Represent what isn't there. "We don't have any no-cream." */
+  crashCollector: crashCollector
 };
 
 let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);

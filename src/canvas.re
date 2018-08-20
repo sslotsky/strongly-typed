@@ -10,7 +10,7 @@ type event = {
 [@bs.deriving abstract]
 type context = {
   mutable font: string,
-  mutable fillStyle: string 
+  mutable fillStyle: string
 };
 
 [@bs.deriving abstract]
@@ -62,7 +62,7 @@ let initUi = (height, width, fontSize) => {
 };
 
 let ui = initUi(600.0, 600.0, 30);
-let (baseMargin, baseHeight) = (20.0, 5.0);
+let (baseMargin, baseHeight) = (30.0, 5.0);
 
 let rec paint = (state, nextState) => {
   context->clearRect(0, 0, int_of_float(ui.width), int_of_float(ui.height));
@@ -89,7 +89,7 @@ let rec paint = (state, nextState) => {
   context->fillStyleSet("white");
   List.iter(site => {
     context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
-  }, state.crashSites);
+  }, state.crashCollector.sites());
 
   animate(() => paint(state, nextState));
 };

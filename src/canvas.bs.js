@@ -33,21 +33,21 @@ function initUi(height, width, fontSize) {
         ];
 }
 
-var ui = initUi(600.0, 600.0, 30);
-
-function paint(state, nextState) {
+function paint(ui, state, nextState) {
   context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
   context.font = String(ui[/* fontSize */2]) + "px Arial";
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, ui[/* width */1], ui[/* height */0]);
   var newState = Curry._2(nextState, state, ui);
   List.iter((function (word) {
-          var match = Common$StronglyTyped.startsWith(Curry._1(ui[/* input */3], /* () */0), word);
-          var match$1 = Curry._1(ui[/* input */3], /* () */0).length;
-          var match$2 = word[/* text */0].length;
+          var input = Curry._1(ui[/* input */3], /* () */0);
+          var text = word[/* text */0];
+          var match = Common$StronglyTyped.startsWith(input, word);
+          var match$1 = input.length;
+          var match$2 = text.length;
           var match$3 = match ? /* tuple */[
-              Curry._1(ui[/* input */3], /* () */0),
-              $$String.sub(word[/* text */0], match$1, match$2 - match$1 | 0)
+              input,
+              $$String.sub(text, match$1, match$2 - match$1 | 0)
             ] : /* tuple */[
               "",
               word[/* text */0]
@@ -59,21 +59,29 @@ function paint(state, nextState) {
           context.fillStyle = "blue";
           context.fillText(match$3[1], $$continue, word[/* y */2]);
           return /* () */0;
-        }), newState[/* words */0]);
+        }), newState[/* words */1]);
+  var match = state[/* base */3];
+  var baseLeft = match[0];
   context.fillStyle = "orange";
-  context.fillRect(30.0, ui[/* height */0] - 5.0, ui[/* width */1] - 30.0 * 2.0, 5.0);
+  context.fillRect(baseLeft, ui[/* height */0] - 5.0, match[1] - baseLeft, 5.0);
   context.fillStyle = "black";
   List.iter((function (site) {
           context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
           return /* () */0;
-        }), Curry._1(state[/* crashCollector */2][/* sites */1], /* () */0));
-  window.requestAnimationFrame((function () {
-          return paint(state, nextState);
-        }));
-  return /* () */0;
+        }), Curry._1(state[/* crashCollector */4][/* sites */2], /* () */0));
+  if (newState[/* gameOver */0]) {
+    var text = "GAME OVER";
+    context.font = "90px Arial";
+    context.fillStyle = "purple";
+    context.fillText(text, ui[/* width */1] / 2.0 - Curry._1(ui[/* calculateWidth */5], text) / 2.0, ui[/* height */0] / 2.0);
+    return /* () */0;
+  } else {
+    window.requestAnimationFrame((function () {
+            return paint(ui, state, nextState);
+          }));
+    return /* () */0;
+  }
 }
-
-var baseMargin = 30.0;
 
 var baseHeight = 5.0;
 
@@ -81,8 +89,6 @@ export {
   canvas ,
   context ,
   initUi ,
-  ui ,
-  baseMargin ,
   baseHeight ,
   paint ,
   

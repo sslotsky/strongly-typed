@@ -14,17 +14,17 @@ let crashSite = () => {
 
     let site = List.hd(rightSide);
 
-    let leftSide = switch (List.rev(leftSide)) {
+    let leftSide = switch (leftSide->List.rev) {
     | [s] when s.right >= site.left => [{ left: s.left, right: max(site.right, s.right) }]
     | [s, ...rest] when s.right >= site.left => List.append(List.rev(rest), [{ left: s.left, right: max(site.right, s.right) }])
     | _ => List.append(leftSide, [site])
     };
 
     sites := switch (List.tl(rightSide)) {
-    | tail => List.append(leftSide, tail)
+    | tail => leftSide->List.append(tail)
     | exception Failure(_) => leftSide
     };
   };
 
-  { crash, sites: () => sites^ };
+  { crash, sites: () => sites^, covers: (x, y) => List.exists(site => site.left <= x && site.right >= y, sites^) };
 };

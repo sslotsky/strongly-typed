@@ -108,6 +108,15 @@ function crashSite() {
   };
   return /* record */[
           /* crash */crash,
+          /* covers */(function (x, y) {
+              return List.exists((function (site) {
+                            if (site[/* left */0] <= x) {
+                              return site[/* right */1] >= y;
+                            } else {
+                              return false;
+                            }
+                          }), sites[0]);
+            }),
           /* sites */(function () {
               return sites[0];
             })

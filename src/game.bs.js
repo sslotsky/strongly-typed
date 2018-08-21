@@ -4,8 +4,6 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Random from "bs-platform/lib/es6/random.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as Crash$StronglyTyped from "./crash.bs.js";
-import * as Canvas$StronglyTyped from "./canvas.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
 
 var match = module.hot;
@@ -82,69 +80,66 @@ var words = /* :: */[
 ];
 
 function nextState(state, ui) {
-  var match = List.partition((function (w) {
-          return w[/* text */0] === Curry._1(ui[/* input */3], /* () */0);
-        }), state[/* words */0]);
-  var captured = match[0];
-  var match$1 = List.partition((function (w) {
-          return w[/* y */2] > ui[/* height */0];
-        }), match[1]);
-  var crashed = match$1[0];
-  var tmp = true;
-  if (List.length(captured) <= 0) {
-    var partial_arg = Curry._1(ui[/* input */3], /* () */0);
-    tmp = !List.exists((function (param) {
-            return Common$StronglyTyped.startsWith(partial_arg, param);
-          }), match$1[1]);
-  }
-  if (tmp) {
-    Curry._1(ui[/* clearInput */4], /* () */0);
-  }
-  state[/* words */0] = List.fold_left((function (words, word) {
-          if (List.mem(word, captured) || List.mem(word, crashed)) {
-            return words;
-          } else {
-            word[2] += 1.5;
-            return List.append(words, /* :: */[
-                        word,
-                        /* [] */0
+  if (!state[/* gameOver */0]) {
+    var match = List.partition((function (w) {
+            return w[/* text */0] === Curry._1(ui[/* input */3], /* () */0);
+          }), state[/* words */1]);
+    var captured = match[0];
+    var match$1 = List.partition((function (w) {
+            return w[/* y */2] > ui[/* height */0];
+          }), match[1]);
+    var crashed = match$1[0];
+    var tmp = true;
+    if (List.length(captured) <= 0) {
+      var partial_arg = Curry._1(ui[/* input */3], /* () */0);
+      tmp = !List.exists((function (param) {
+              return Common$StronglyTyped.startsWith(partial_arg, param);
+            }), match$1[1]);
+    }
+    if (tmp) {
+      Curry._1(ui[/* clearInput */4], /* () */0);
+    }
+    state[/* words */1] = List.fold_left((function (words, word) {
+            if (List.mem(word, captured) || List.mem(word, crashed)) {
+              return words;
+            } else {
+              word[2] += 1.5;
+              return List.append(words, /* :: */[
+                          word,
+                          /* [] */0
+                        ]);
+            }
+          }), /* [] */0, state[/* words */1]);
+    List.iter((function (word) {
+            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+                        /* left */word[/* x */1],
+                        /* right */word[/* x */1] + Curry._1(ui[/* calculateWidth */5], word[/* text */0])
                       ]);
-          }
-        }), /* [] */0, state[/* words */0]);
-  List.iter((function (word) {
-          return Curry._1(state[/* crashCollector */2][/* crash */0], /* record */[
-                      /* left */word[/* x */1],
-                      /* right */word[/* x */1] + Curry._1(ui[/* calculateWidth */5], word[/* text */0])
-                    ]);
-        }), crashed);
-  if (state[/* ticks */1] % 90 === 0) {
-    var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-    var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
-    state[/* words */0] = List.append(state[/* words */0], /* :: */[
-          /* record */[
-            /* text */word,
-            /* x */Random.$$float(max),
-            /* y */ui[/* fontSize */2]
-          ],
-          /* [] */0
-        ]);
+          }), crashed);
+    if (state[/* ticks */2] % 90 === 0) {
+      var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
+      var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
+      state[/* words */1] = List.append(state[/* words */1], /* :: */[
+            /* record */[
+              /* text */word,
+              /* x */Random.$$float(max),
+              /* y */ui[/* fontSize */2]
+            ],
+            /* [] */0
+          ]);
+    }
+    state[/* ticks */2] = state[/* ticks */2] + 1 | 0;
+    if (Curry._2(state[/* crashCollector */4][/* covers */1], 30.0, 570.0)) {
+      state[/* gameOver */0] = true;
+    }
+    
   }
-  state[/* ticks */1] = state[/* ticks */1] + 1 | 0;
   return state;
 }
-
-var initialState = /* record */[
-  /* words : [] */0,
-  /* ticks */0,
-  /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
-];
-
-Canvas$StronglyTyped.paint(initialState, nextState);
 
 export {
   words ,
   nextState ,
-  initialState ,
   
 }
 /* match Not a pure module */

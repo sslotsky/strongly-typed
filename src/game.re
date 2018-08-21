@@ -15,7 +15,7 @@ let nextState = (state, ui) => {
       if (word->List.mem(captured) || word->List.mem(crashed)) {
         words;
       } else {
-        word.y = word.y +. 1.5;
+        word.y = word.y +. word.velocity;
         words->List.append([word]);
       };
     }, [], state.words);
@@ -27,7 +27,7 @@ let nextState = (state, ui) => {
     if (state.ticks mod 90 == 0) {
       let word = words->List.nth(Random.int(words->List.length - 1));
       let max = ui.width -. ui.calculateWidth(word);
-      state.words = state.words->List.append([{ text: word, x: Random.float(max), y: ui.fontSize->float_of_int }]);
+      state.words = state.words->List.append([{ text: word, x: Random.float(max), y: ui.fontSize->float_of_int, velocity: 1.0 +. Random.float(2.5) }]);
     };
 
     state.ticks = state.ticks + 1;

@@ -1,5 +1,6 @@
 type word = {
   text: string,
+  velocity: float,
   mutable x: float,
   mutable y: float
 };

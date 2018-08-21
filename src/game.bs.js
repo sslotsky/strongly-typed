@@ -77,7 +77,7 @@ function nextState(state, ui) {
           }), state[/* words */1]);
     var captured = match[0];
     var match$1 = List.partition((function (w) {
-            return w[/* y */2] > ui[/* height */0];
+            return w[/* y */3] > ui[/* height */0];
           }), match[1]);
     var crashed = match$1[0];
     var tmp = true;
@@ -94,7 +94,7 @@ function nextState(state, ui) {
             if (List.mem(word, captured) || List.mem(word, crashed)) {
               return words;
             } else {
-              word[2] += 1.5;
+              word[3] += word[/* velocity */1];
               return List.append(words, /* :: */[
                           word,
                           /* [] */0
@@ -103,8 +103,8 @@ function nextState(state, ui) {
           }), /* [] */0, state[/* words */1]);
     List.iter((function (word) {
             return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
-                        /* left */word[/* x */1],
-                        /* right */word[/* x */1] + Curry._1(ui[/* calculateWidth */5], word[/* text */0])
+                        /* left */word[/* x */2],
+                        /* right */word[/* x */2] + Curry._1(ui[/* calculateWidth */5], word[/* text */0])
                       ]);
           }), crashed);
     if (state[/* ticks */2] % 90 === 0) {
@@ -113,6 +113,7 @@ function nextState(state, ui) {
       state[/* words */1] = List.append(state[/* words */1], /* :: */[
             /* record */[
               /* text */word,
+              /* velocity */1.0 + Random.$$float(2.5),
               /* x */Random.$$float(max),
               /* y */ui[/* fontSize */2]
             ],

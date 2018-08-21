@@ -53,11 +53,11 @@ function paint(ui, state, nextState) {
               word[/* text */0]
             ];
           var matching = match$3[0];
-          var $$continue = word[/* x */1] + context.measureText(matching).width;
+          var $$continue = word[/* x */2] + context.measureText(matching).width;
           context.fillStyle = "red";
-          context.fillText(matching, word[/* x */1], word[/* y */2]);
+          context.fillText(matching, word[/* x */2], word[/* y */3]);
           context.fillStyle = "blue";
-          context.fillText(match$3[1], $$continue, word[/* y */2]);
+          context.fillText(match$3[1], $$continue, word[/* y */3]);
           return /* () */0;
         }), newState[/* words */1]);
   var match = state[/* base */3];

@@ -1,20 +1,5 @@
 open Common;
 
-type hot;
-
-[@bs.deriving abstract]
-type parcelModule = {
-  hot: option(hot)
-};
-
-[@bs.val] external parcelModule: parcelModule = "module";
-[@bs.send] external accept: (hot, unit) => unit = "accept";
-
-switch (parcelModule->hotGet) {
-| Some(h) => h->accept()
-| _ => Js.log("We are not hot")
-};
-
 let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
 
 let nextState = (state, ui) => {

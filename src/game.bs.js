@@ -3,16 +3,7 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Random from "bs-platform/lib/es6/random.js";
-import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Common$StronglyTyped from "./common.bs.js";
-
-var match = module.hot;
-
-if (match !== undefined) {
-  Js_primitive.valFromOption(match).accept();
-} else {
-  console.log("We are not hot");
-}
 
 var words = /* :: */[
   "Logging",
@@ -142,4 +133,4 @@ export {
   nextState ,
   
 }
-/* match Not a pure module */
+/* No side effect */

@@ -3,13 +3,19 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as $$String from "bs-platform/lib/es6/string.js";
+import * as Audio$StronglyTyped from "./audio.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
+import * as Atari_boomWav from "./assets/atari_boom.wav";
 
 var canvas = document.getElementById("canvas");
 
 var context = canvas.getContext("2d");
 
-function initUi(height, width, fontSize) {
+function calculateWidth(str) {
+  return context.measureText(str).width;
+}
+
+function paint(width, height, fontSize, state, nextState, ctx, boomSound) {
   var input = /* record */[/* contents */""];
   var clearInput = function () {
     input[0] = "";
@@ -19,68 +25,95 @@ function initUi(height, width, fontSize) {
           input[0] = input[0] + e.key;
           return /* () */0;
         }));
-  return /* record */[
-          /* height */height,
-          /* width */width,
-          /* fontSize */fontSize,
-          /* input */(function () {
-              return input[0];
-            }),
-          /* clearInput */clearInput,
-          /* calculateWidth */(function (str) {
-              return context.measureText(str).width;
-            })
-        ];
+  var ui_003 = function () {
+    return input[0];
+  };
+  var ui_006 = function () {
+    var source = ctx.createBufferSource();
+    source.buffer = boomSound;
+    source.connect(ctx.destination);
+    source.start(0);
+    return /* () */0;
+  };
+  var ui = /* record */[
+    /* height */height,
+    /* width */width,
+    /* fontSize */fontSize,
+    ui_003,
+    /* clearInput */clearInput,
+    /* calculateWidth */calculateWidth,
+    ui_006
+  ];
+  var tick = function (state) {
+    context.clearRect(0, 0, width | 0, height | 0);
+    context.fillStyle = "black";
+    context.fillRect(0.0, 0.0, width, height);
+    var newState = Curry._2(nextState, state, ui);
+    context.font = String(fontSize) + "px Arial";
+    List.iter((function (word) {
+            var input = Curry._1(ui_003, /* () */0);
+            var text = word[/* text */0];
+            var match = Common$StronglyTyped.startsWith(input, word);
+            var match$1 = input.length;
+            var match$2 = text.length;
+            var match$3 = match ? /* tuple */[
+                input,
+                $$String.sub(text, match$1, match$2 - match$1 | 0)
+              ] : /* tuple */[
+                "",
+                word[/* text */0]
+              ];
+            var matching = match$3[0];
+            var $$continue = word[/* x */2] + context.measureText(matching).width;
+            context.fillStyle = "red";
+            context.fillText(matching, word[/* x */2], word[/* y */3]);
+            context.fillStyle = "blue";
+            context.fillText(match$3[1], $$continue, word[/* y */3]);
+            return /* () */0;
+          }), newState[/* words */1]);
+    var match = state[/* base */3];
+    var baseLeft = match[0];
+    context.fillStyle = "orange";
+    context.fillRect(baseLeft, height - 5.0, match[1] - baseLeft, 5.0);
+    context.fillStyle = "black";
+    List.iter((function (site) {
+            context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
+            return /* () */0;
+          }), Curry._1(state[/* crashCollector */4][/* sites */2], /* () */0));
+    if (newState[/* gameOver */0]) {
+      var text = "GAME OVER";
+      context.font = "90px Arial";
+      context.fillStyle = "purple";
+      context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
+      return /* () */0;
+    } else {
+      window.requestAnimationFrame((function () {
+              return tick(state);
+            }));
+      return /* () */0;
+    }
+  };
+  return tick(state);
 }
 
-function paint(ui, state, nextState) {
-  context.clearRect(0, 0, ui[/* width */1] | 0, ui[/* height */0] | 0);
-  context.font = String(ui[/* fontSize */2]) + "px Arial";
+function boot(height, width, fontSize, initialState, nextState) {
   context.fillStyle = "black";
-  context.fillRect(0.0, 0.0, ui[/* width */1], ui[/* height */0]);
-  var newState = Curry._2(nextState, state, ui);
-  List.iter((function (word) {
-          var input = Curry._1(ui[/* input */3], /* () */0);
-          var text = word[/* text */0];
-          var match = Common$StronglyTyped.startsWith(input, word);
-          var match$1 = input.length;
-          var match$2 = text.length;
-          var match$3 = match ? /* tuple */[
-              input,
-              $$String.sub(text, match$1, match$2 - match$1 | 0)
-            ] : /* tuple */[
-              "",
-              word[/* text */0]
-            ];
-          var matching = match$3[0];
-          var $$continue = word[/* x */2] + context.measureText(matching).width;
-          context.fillStyle = "red";
-          context.fillText(matching, word[/* x */2], word[/* y */3]);
-          context.fillStyle = "blue";
-          context.fillText(match$3[1], $$continue, word[/* y */3]);
-          return /* () */0;
-        }), newState[/* words */1]);
-  var match = state[/* base */3];
-  var baseLeft = match[0];
-  context.fillStyle = "orange";
-  context.fillRect(baseLeft, ui[/* height */0] - 5.0, match[1] - baseLeft, 5.0);
-  context.fillStyle = "black";
-  List.iter((function (site) {
-          context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
-          return /* () */0;
-        }), Curry._1(state[/* crashCollector */4][/* sites */2], /* () */0));
-  if (newState[/* gameOver */0]) {
-    var text = "GAME OVER";
-    context.font = "90px Arial";
-    context.fillStyle = "purple";
-    context.fillText(text, ui[/* width */1] / 2.0 - Curry._1(ui[/* calculateWidth */5], text) / 2.0, ui[/* height */0] / 2.0);
-    return /* () */0;
-  } else {
-    window.requestAnimationFrame((function () {
-            return paint(ui, state, nextState);
+  context.fillRect(0.0, 0.0, width, height);
+  var text = "START GAME";
+  context.font = "90px Arial";
+  context.fillStyle = "purple";
+  context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
+  var startGame = function () {
+    canvas.removeEventListener("click", startGame);
+    var ctx = new AudioContext();
+    Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default).then((function (boomSound) {
+            paint(width, height, fontSize, initialState, nextState, ctx, boomSound);
+            return Promise.resolve(boomSound);
           }));
     return /* () */0;
-  }
+  };
+  canvas.addEventListener("click", startGame);
+  return /* () */0;
 }
 
 var baseHeight = 5.0;
@@ -88,9 +121,10 @@ var baseHeight = 5.0;
 export {
   canvas ,
   context ,
-  initUi ,
+  calculateWidth ,
   baseHeight ,
   paint ,
+  boot ,
   
 }
 /* canvas Not a pure module */

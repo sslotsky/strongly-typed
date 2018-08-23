@@ -16,20 +16,18 @@ if (match !== undefined) {
 
 Random.self_init(/* () */0);
 
-var ui = Canvas$StronglyTyped.initUi(600.0, 600.0, 30);
-
 var initialState = /* record */[
   /* gameOver */false,
   /* words : [] */0,
   /* ticks */0,
   /* base : tuple */[
     30.0,
-    ui[/* width */1] - 30.0
+    600.0 - 30.0
   ],
   /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
 ];
 
-Canvas$StronglyTyped.paint(ui, initialState, Game$StronglyTyped.nextState);
+Canvas$StronglyTyped.boot(600.0, 600.0, 30, initialState, Game$StronglyTyped.nextState);
 
 var height = 600.0;
 
@@ -44,7 +42,6 @@ export {
   width ,
   fontSize ,
   baseMargin ,
-  ui ,
   initialState ,
   
 }

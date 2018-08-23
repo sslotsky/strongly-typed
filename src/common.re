@@ -31,7 +31,8 @@ type ui = {
   fontSize: int,
   input: unit => string,
   clearInput: unit => unit,
-  calculateWidth: string => float
+  calculateWidth: string => float,
+  onCrash: word => unit
 };
 
 let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);

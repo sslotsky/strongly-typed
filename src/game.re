@@ -21,7 +21,12 @@ let nextState = (state, ui) => {
     }, [], state.words);
 
     List.iter(word => {
-      state.crashCollector.crash({ left: word.x, right: word.x +. ui.calculateWidth(word.text) });
+      let (left, right) = (word.x, word.x +. ui.calculateWidth(word.text));
+      if (!state.crashCollector.covers(left, right)) {
+        ui.onCrash(word);
+      };
+      
+      state.crashCollector.crash({ left, right });
     }, crashed);
 
     if (state.ticks mod 90 == 0) {

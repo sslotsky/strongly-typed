@@ -38,7 +38,19 @@ let calculateWidth = str => context->measureText(str)->widthGet;
 
 let baseHeight = 5.0;
 
-let paint = (width, height, fontSize, state, nextState, ctx, boomSound) => {
+type dimensions = {
+  height: float,
+  width: float,
+  fontSize: int
+};
+
+type audioConfig = {
+  boomSound: Audio.buffer,
+  audioContext: Audio.audioContext
+};
+
+let paint = (dimensions, audioConfig, state, nextState) => {
+  let ({width, height, fontSize}, {audioContext, boomSound}) = (dimensions, audioConfig);
   let input = ref("");
 
   let clearInput = () => {
@@ -57,9 +69,9 @@ let paint = (width, height, fontSize, state, nextState, ctx, boomSound) => {
     clearInput,
     calculateWidth,
     onCrash: _ => {
-      let source = ctx->createBufferSource();
+      let source = audioContext->createBufferSource();
       source->bufferSet(boomSound);
-      source->connect(ctx->destinationGet);
+      source->connect(audioContext->destinationGet);
       source->start(0);
     }
   };
@@ -124,8 +136,9 @@ let boot = (height, width, fontSize, initialState, nextState) => {
 
     let ctx = audioContext();
     ctx->loadSound(boom)|>Js.Promise.then_(boomSound => {
-      paint(width, height, fontSize, initialState, nextState, ctx, boomSound);
-      Js.Promise.resolve(boomSound);
+      let start = paint({width, height, fontSize}, {audioContext: ctx, boomSound});
+      start(initialState, nextState);
+      Js.Promise.resolve();
     })|>ignore;
   };
 

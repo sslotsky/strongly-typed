@@ -15,7 +15,12 @@ function calculateWidth(str) {
   return context.measureText(str).width;
 }
 
-function paint(width, height, fontSize, state, nextState, ctx, boomSound) {
+function paint(dimensions, audioConfig, state, nextState) {
+  var audioContext = audioConfig[/* audioContext */1];
+  var boomSound = audioConfig[/* boomSound */0];
+  var fontSize = dimensions[/* fontSize */2];
+  var width = dimensions[/* width */1];
+  var height = dimensions[/* height */0];
   var input = /* record */[/* contents */""];
   var clearInput = function () {
     input[0] = "";
@@ -29,9 +34,9 @@ function paint(width, height, fontSize, state, nextState, ctx, boomSound) {
     return input[0];
   };
   var ui_006 = function () {
-    var source = ctx.createBufferSource();
+    var source = audioContext.createBufferSource();
     source.buffer = boomSound;
-    source.connect(ctx.destination);
+    source.connect(audioContext.destination);
     source.start(0);
     return /* () */0;
   };
@@ -107,8 +112,20 @@ function boot(height, width, fontSize, initialState, nextState) {
     canvas.removeEventListener("click", startGame);
     var ctx = new AudioContext();
     Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default).then((function (boomSound) {
-            paint(width, height, fontSize, initialState, nextState, ctx, boomSound);
-            return Promise.resolve(boomSound);
+            var partial_arg = /* record */[
+              /* boomSound */boomSound,
+              /* audioContext */ctx
+            ];
+            var partial_arg$1 = /* record */[
+              /* height */height,
+              /* width */width,
+              /* fontSize */fontSize
+            ];
+            var start = function (param, param$1) {
+              return paint(partial_arg$1, partial_arg, param, param$1);
+            };
+            Curry._2(start, initialState, nextState);
+            return Promise.resolve(/* () */0);
           }));
     return /* () */0;
   };

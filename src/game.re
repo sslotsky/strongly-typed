@@ -22,10 +22,12 @@ let nextState = (state, ui) => {
 
     List.iter(word => {
       let (left, right) = (word.x, word.x +. ui.calculateWidth(word.text));
-      if (!state.crashCollector.covers(left, right)) {
+      let (baseLeft, baseRight) = state.base;
+
+      if (!state.crashCollector.covers(max(baseLeft, left), min(baseRight, right))) {
         ui.onCrash(word);
       };
-      
+
       state.crashCollector.crash({ left, right });
     }, crashed);
 

@@ -38,13 +38,3 @@ type ui = {
 };
 
 let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);
-
-let resolveAll = promises => {
-  List.fold_left((acc, promise) => {
-    Js.Promise.then_(results => {
-      Js.Promise.then_(result => {
-        Js.Promise.resolve(List.append(results, [result]))
-      }, promise)
-    }, acc)
-  }, Js.Promise.resolve([]), promises);
-};

@@ -112,12 +112,10 @@ function nextState(state, ui) {
             if (!Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
               Curry._1(ui[/* onCrash */6], word);
             }
-            Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
-                  /* left */left,
-                  /* right */right
-                ]);
-            console.log(Curry._2(state[/* crashCollector */4][/* percentCovered */2], baseLeft, baseRight));
-            return /* () */0;
+            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+                        /* left */left,
+                        /* right */right
+                      ]);
           }), match$1[0]);
     List.iter(ui[/* onCollect */7], captured);
     var newWords = List.map((function (word) {

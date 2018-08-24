@@ -114,6 +114,7 @@ function nextState(state, ui) {
                         /* right */right
                       ]);
           }), crashed);
+    List.iter(ui[/* onCollect */7], captured);
     if (state[/* ticks */2] % 90 === 0) {
       var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
       var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);

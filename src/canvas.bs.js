@@ -6,6 +6,7 @@ import * as $$String from "bs-platform/lib/es6/string.js";
 import * as Audio$StronglyTyped from "./audio.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
 import * as Atari_boomWav from "./assets/atari_boom.wav";
+import * as SFX_Pickup_01Wav from "./assets/SFX_Pickup_01.wav";
 
 var canvas = document.getElementById("canvas");
 
@@ -16,7 +17,8 @@ function calculateWidth(str) {
 }
 
 function paint(dimensions, audioConfig, state, nextState) {
-  var audioContext = audioConfig[/* audioContext */1];
+  var audioContext = audioConfig[/* audioContext */2];
+  var collectSound = audioConfig[/* collectSound */1];
   var boomSound = audioConfig[/* boomSound */0];
   var fontSize = dimensions[/* fontSize */2];
   var width = dimensions[/* width */1];
@@ -40,6 +42,13 @@ function paint(dimensions, audioConfig, state, nextState) {
     source.start(0);
     return /* () */0;
   };
+  var ui_007 = function () {
+    var source = audioContext.createBufferSource();
+    source.buffer = collectSound;
+    source.connect(audioContext.destination);
+    source.start(0);
+    return /* () */0;
+  };
   var ui = /* record */[
     /* height */height,
     /* width */width,
@@ -47,7 +56,8 @@ function paint(dimensions, audioConfig, state, nextState) {
     ui_003,
     /* clearInput */clearInput,
     /* calculateWidth */calculateWidth,
-    ui_006
+    ui_006,
+    ui_007
   ];
   var tick = function (state) {
     context.clearRect(0, 0, width | 0, height | 0);
@@ -111,21 +121,26 @@ function boot(height, width, fontSize, initialState, nextState) {
   var startGame = function () {
     canvas.removeEventListener("click", startGame);
     var ctx = new AudioContext();
-    Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default).then((function (boomSound) {
-            var partial_arg = /* record */[
-              /* boomSound */boomSound,
-              /* audioContext */ctx
-            ];
-            var partial_arg$1 = /* record */[
-              /* height */height,
-              /* width */width,
-              /* fontSize */fontSize
-            ];
-            var start = function (param, param$1) {
-              return paint(partial_arg$1, partial_arg, param, param$1);
-            };
-            Curry._2(start, initialState, nextState);
-            return Promise.resolve(/* () */0);
+    var loadBoom = Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default);
+    var loadCollect = Audio$StronglyTyped.loadSound(ctx, SFX_Pickup_01Wav.default);
+    loadBoom.then((function (boomSound) {
+            return loadCollect.then((function (collectSound) {
+                          var partial_arg = /* record */[
+                            /* boomSound */boomSound,
+                            /* collectSound */collectSound,
+                            /* audioContext */ctx
+                          ];
+                          var partial_arg$1 = /* record */[
+                            /* height */height,
+                            /* width */width,
+                            /* fontSize */fontSize
+                          ];
+                          var start = function (param, param$1) {
+                            return paint(partial_arg$1, partial_arg, param, param$1);
+                          };
+                          Curry._2(start, initialState, nextState);
+                          return Promise.resolve(/* () */0);
+                        }));
           }));
     return /* () */0;
   };

@@ -30,6 +30,7 @@ type measurement = {
 [@bs.send] external measureText: (context, string) => measurement = "measureText";
 [@bs.send] external clearRect: (context, int, int, int, int) => unit = "clearRect";
 [@bs.module "./assets/atari_boom.wav"] external boom: string = "default";
+[@bs.module "./assets/SFX_Pickup_01.wav"] external collect: string = "default";
 
 let canvas = getCanvas("canvas");
 let context = canvas->getContext("2d");
@@ -46,11 +47,12 @@ type dimensions = {
 
 type audioConfig = {
   boomSound: Audio.buffer,
+  collectSound: Audio.buffer,
   audioContext: Audio.audioContext
 };
 
 let paint = (dimensions, audioConfig, state, nextState) => {
-  let ({width, height, fontSize}, {audioContext, boomSound}) = (dimensions, audioConfig);
+  let ({width, height, fontSize}, {audioContext, boomSound, collectSound}) = (dimensions, audioConfig);
   let input = ref("");
 
   let clearInput = () => {
@@ -71,6 +73,12 @@ let paint = (dimensions, audioConfig, state, nextState) => {
     onCrash: _ => {
       let source = audioContext->createBufferSource();
       source->bufferSet(boomSound);
+      source->connect(audioContext->destinationGet);
+      source->start(0);
+    },
+    onCollect: _ => {
+      let source = audioContext->createBufferSource();
+      source->bufferSet(collectSound);
       source->connect(audioContext->destinationGet);
       source->start(0);
     }
@@ -135,11 +143,16 @@ let boot = (height, width, fontSize, initialState, nextState) => {
     canvas->unsubscribe("click", startGame);
 
     let ctx = audioContext();
-    ctx->loadSound(boom)|>Js.Promise.then_(boomSound => {
-      let start = paint({width, height, fontSize}, {audioContext: ctx, boomSound});
-      start(initialState, nextState);
-      Js.Promise.resolve();
-    })|>ignore;
+    let loadBoom = ctx->loadSound(boom);
+    let loadCollect = ctx->loadSound(collect);
+
+    loadBoom |> Js.Promise.then_(boomSound => {
+      loadCollect |> Js.Promise.then_(collectSound => {
+        let start = paint({width, height, fontSize}, {audioContext: ctx, boomSound, collectSound});
+        start(initialState, nextState);
+        Js.Promise.resolve();
+      })
+    }) |> ignore;
   };
 
   canvas->subscribe("click", startGame);

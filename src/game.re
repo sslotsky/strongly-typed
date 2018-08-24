@@ -31,6 +31,8 @@ let nextState = (state, ui) => {
       state.crashCollector.crash({ left, right });
     }, crashed);
 
+    List.iter(ui.onCollect, captured);
+
     if (state.ticks mod 90 == 0) {
       let word = words->List.nth(Random.int(words->List.length - 1));
       let max = ui.width -. ui.calculateWidth(word);

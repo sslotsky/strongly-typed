@@ -4,6 +4,7 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as $$String from "bs-platform/lib/es6/string.js";
 import * as Audio$StronglyTyped from "./audio.bs.js";
+import * as Crash$StronglyTyped from "./crash.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
 import * as Atari_boomWav from "./assets/atari_boom.wav";
 import * as SFX_Pickup_01Wav from "./assets/SFX_Pickup_01.wav";
@@ -16,7 +17,7 @@ function calculateWidth(str) {
   return context.measureText(str).width;
 }
 
-function paint(dimensions, audioConfig, state, nextState) {
+function paint(dimensions, audioConfig, initialState, nextState) {
   var audioContext = audioConfig[/* audioContext */2];
   var collectSound = audioConfig[/* collectSound */1];
   var boomSound = audioConfig[/* boomSound */0];
@@ -92,15 +93,27 @@ function paint(dimensions, audioConfig, state, nextState) {
       context.font = "90px Arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
+      console.log(initialState[/* gameOver */0]);
+      var restart = function () {
+        canvas.removeEventListener("click", restart);
+        return tick(/* record */[
+                    /* gameOver */initialState[/* gameOver */0],
+                    /* words */initialState[/* words */1],
+                    /* ticks */initialState[/* ticks */2],
+                    /* base */initialState[/* base */3],
+                    /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
+                  ]);
+      };
+      canvas.addEventListener("click", restart);
       return /* () */0;
     } else {
       window.requestAnimationFrame((function () {
-              return tick(state);
+              return tick(newState);
             }));
       return /* () */0;
     }
   };
-  return tick(state);
+  return tick(initialState);
 }
 
 function boot(height, width, fontSize, initialState, nextState) {

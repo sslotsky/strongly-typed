@@ -70,8 +70,21 @@ var words = /* :: */[
   ]
 ];
 
+function spawn(ui) {
+  var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
+  var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
+  return /* record */[
+          /* text */word,
+          /* velocity */1.5 + Random.$$float(2.5),
+          /* x */Random.$$float(max),
+          /* y */ui[/* fontSize */2]
+        ];
+}
+
 function nextState(state, ui) {
-  if (!state[/* gameOver */0]) {
+  if (state[/* gameOver */0]) {
+    return state;
+  } else {
     var match = List.partition((function (w) {
             return w[/* text */0] === Curry._1(ui[/* input */3], /* () */0);
           }), state[/* words */1]);
@@ -79,34 +92,23 @@ function nextState(state, ui) {
     var match$1 = List.partition((function (w) {
             return w[/* y */3] > ui[/* height */0];
           }), match[1]);
-    var crashed = match$1[0];
+    var remaining = match$1[1];
+    var match$2 = state[/* base */3];
+    var baseRight = match$2[1];
+    var baseLeft = match$2[0];
     var tmp = true;
     if (List.length(captured) <= 0) {
       var partial_arg = Curry._1(ui[/* input */3], /* () */0);
       tmp = !List.exists((function (param) {
               return Common$StronglyTyped.startsWith(partial_arg, param);
-            }), match$1[1]);
+            }), remaining);
     }
     if (tmp) {
       Curry._1(ui[/* clearInput */4], /* () */0);
     }
-    state[/* words */1] = List.fold_left((function (words, word) {
-            if (List.mem(word, captured) || List.mem(word, crashed)) {
-              return words;
-            } else {
-              word[3] += word[/* velocity */1];
-              return List.append(words, /* :: */[
-                          word,
-                          /* [] */0
-                        ]);
-            }
-          }), /* [] */0, state[/* words */1]);
     List.iter((function (word) {
             var left = word[/* x */2];
             var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */5], word[/* text */0]);
-            var match = state[/* base */3];
-            var baseRight = match[1];
-            var baseLeft = match[0];
             if (!Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
               Curry._1(ui[/* onCrash */6], word);
             }
@@ -116,32 +118,35 @@ function nextState(state, ui) {
                 ]);
             console.log(Curry._2(state[/* crashCollector */4][/* percentCovered */2], baseLeft, baseRight));
             return /* () */0;
-          }), crashed);
+          }), match$1[0]);
     List.iter(ui[/* onCollect */7], captured);
-    if (state[/* ticks */2] % 90 === 0) {
-      var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-      var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */5], word);
-      state[/* words */1] = List.append(state[/* words */1], /* :: */[
-            /* record */[
-              /* text */word,
-              /* velocity */1.0 + Random.$$float(2.5),
-              /* x */Random.$$float(max),
-              /* y */ui[/* fontSize */2]
-            ],
+    var newWords = List.map((function (word) {
+            return /* record */[
+                    /* text */word[/* text */0],
+                    /* velocity */word[/* velocity */1],
+                    /* x */word[/* x */2],
+                    /* y */word[/* y */3] + word[/* velocity */1]
+                  ];
+          }), remaining);
+    var match$3 = state[/* ticks */2] % 70;
+    var newWords$1 = match$3 !== 0 ? newWords : List.append(newWords, /* :: */[
+            spawn(ui),
             /* [] */0
           ]);
-    }
-    state[/* ticks */2] = state[/* ticks */2] + 1 | 0;
-    if (Curry._2(state[/* crashCollector */4][/* covers */1], 30.0, 570.0)) {
-      state[/* gameOver */0] = true;
-    }
-    
+    var gameOver = Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft, baseRight);
+    return /* record */[
+            /* gameOver */gameOver,
+            /* words */newWords$1,
+            /* ticks */state[/* ticks */2] + 1 | 0,
+            /* base */state[/* base */3],
+            /* crashCollector */state[/* crashCollector */4]
+          ];
   }
-  return state;
 }
 
 export {
   words ,
+  spawn ,
   nextState ,
   
 }

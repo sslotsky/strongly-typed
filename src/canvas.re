@@ -51,7 +51,7 @@ type audioConfig = {
   audioContext: Audio.audioContext
 };
 
-let paint = (dimensions, audioConfig, state, nextState) => {
+let paint = (dimensions, audioConfig, initialState, nextState) => {
   let ({width, height, fontSize}, {audioContext, boomSound, collectSound}) = (dimensions, audioConfig);
   let input = ref("");
 
@@ -112,12 +112,20 @@ let paint = (dimensions, audioConfig, state, nextState) => {
       context->fontSet("90px Arial");
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (ui.calculateWidth(text) /. 2.0), ui.height /. 2.0);
+
+      Js.log(initialState.gameOver);
+      let rec restart = _ => {
+        canvas->unsubscribe("click", restart);
+        { ...initialState, crashCollector: Crash.crashSite() }->tick;
+      };
+
+      canvas->subscribe("click", restart);
     } else {
-      animate(() => state->tick);
+      animate(() => newState->tick);
     };
   };
 
-  state->tick;
+  initialState->tick;
 };
 
 let boot = (height, width, fontSize, initialState, nextState) => {

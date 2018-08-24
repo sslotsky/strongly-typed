@@ -22,16 +22,16 @@ var initialState = /* record */[
   /* ticks */0,
   /* base : tuple */[
     30.0,
-    600.0 - 30.0
+    1200.0 - 30.0
   ],
   /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
 ];
 
-Canvas$StronglyTyped.boot(600.0, 600.0, 30, initialState, Game$StronglyTyped.nextState);
+Canvas$StronglyTyped.boot(600.0, 1200.0, 30, initialState, Game$StronglyTyped.nextState);
 
 var height = 600.0;
 
-var width = 600.0;
+var width = 1200.0;
 
 var fontSize = 30;
 

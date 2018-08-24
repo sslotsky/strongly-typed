@@ -13,6 +13,7 @@ type crashSite = {
 type crashCollector = {
   crash: crashSite => unit,
   covers: (float, float) => bool,
+  percentCovered: (float, float) => float,
   sites: unit => list(crashSite)
 };
 

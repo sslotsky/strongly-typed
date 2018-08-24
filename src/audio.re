@@ -45,3 +45,10 @@ let loadSound = (ctx, filename) => {
     req->sendRequest();
   });
 };
+
+let playSound = (ctx, buffer) => {
+  let source = ctx->createBufferSource();
+  source->bufferSet(buffer);
+  source->connect(ctx->destinationGet);
+  source->start(0);
+};

@@ -17,8 +17,17 @@ function loadSound(ctx, filename) {
               }));
 }
 
+function playSound(ctx, buffer) {
+  var source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  source.start(0);
+  return /* () */0;
+}
+
 export {
   loadSound ,
+  playSound ,
   
 }
 /* No side effect */

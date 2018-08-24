@@ -3,7 +3,6 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Random from "bs-platform/lib/es6/random.js";
-import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as Common$StronglyTyped from "./common.bs.js";
 
 var words = /* :: */[
@@ -106,13 +105,17 @@ function nextState(state, ui) {
             var left = word[/* x */2];
             var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */5], word[/* text */0]);
             var match = state[/* base */3];
-            if (!Curry._2(state[/* crashCollector */4][/* covers */1], Caml_primitive.caml_float_max(match[0], left), Caml_primitive.caml_float_min(match[1], right))) {
+            var baseRight = match[1];
+            var baseLeft = match[0];
+            if (!Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
               Curry._1(ui[/* onCrash */6], word);
             }
-            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
-                        /* left */left,
-                        /* right */right
-                      ]);
+            Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+                  /* left */left,
+                  /* right */right
+                ]);
+            console.log(Curry._2(state[/* crashCollector */4][/* percentCovered */2], baseLeft, baseRight));
+            return /* () */0;
           }), crashed);
     List.iter(ui[/* onCollect */7], captured);
     if (state[/* ticks */2] % 90 === 0) {

@@ -70,18 +70,8 @@ let paint = (dimensions, audioConfig, state, nextState) => {
     input: () => input^,
     clearInput,
     calculateWidth,
-    onCrash: _ => {
-      let source = audioContext->createBufferSource();
-      source->bufferSet(boomSound);
-      source->connect(audioContext->destinationGet);
-      source->start(0);
-    },
-    onCollect: _ => {
-      let source = audioContext->createBufferSource();
-      source->bufferSet(collectSound);
-      source->connect(audioContext->destinationGet);
-      source->start(0);
-    }
+    onCrash: _ => audioContext->playSound(boomSound),
+    onCollect: _ => audioContext->playSound(collectSound)
   };
 
   let rec tick = state => {

@@ -26,5 +26,15 @@ let crashSite = () => {
     };
   };
 
-  { crash, sites: () => sites^, covers: (x, y) => List.exists(site => site.left <= x && site.right >= y, sites^) };
+  let covers = (x, y) => List.exists(site => site.left <= x && site.right >= y, sites^);
+  let percentCovered = (x, y) => {
+    let (x, y) = (min(x, y), max(x, y));
+    let amountCovered = List.fold_left((sum, site) => {
+      sum +. (min(site.right, y) -. max(site.left, x))
+    }, 0.0, sites^);
+
+    100.0 *. amountCovered /. (y -. x);
+  };
+
+  { crash, sites: () => sites^, covers, percentCovered };
 };

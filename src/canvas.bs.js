@@ -36,18 +36,10 @@ function paint(dimensions, audioConfig, state, nextState) {
     return input[0];
   };
   var ui_006 = function () {
-    var source = audioContext.createBufferSource();
-    source.buffer = boomSound;
-    source.connect(audioContext.destination);
-    source.start(0);
-    return /* () */0;
+    return Audio$StronglyTyped.playSound(audioContext, boomSound);
   };
   var ui_007 = function () {
-    var source = audioContext.createBufferSource();
-    source.buffer = collectSound;
-    source.connect(audioContext.destination);
-    source.start(0);
-    return /* () */0;
+    return Audio$StronglyTyped.playSound(audioContext, collectSound);
   };
   var ui = /* record */[
     /* height */height,
@@ -94,7 +86,7 @@ function paint(dimensions, audioConfig, state, nextState) {
     List.iter((function (site) {
             context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
             return /* () */0;
-          }), Curry._1(state[/* crashCollector */4][/* sites */2], /* () */0));
+          }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px Arial";

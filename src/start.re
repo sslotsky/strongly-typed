@@ -18,7 +18,7 @@ switch (parcelModule->hotGet) {
 
 Random.self_init();
 
-let (height, width, fontSize, baseMargin) = (600.0, 600.0, 30, 30.0);
+let (height, width, fontSize, baseMargin) = (600.0, 1200.0, 30, 30.0);
 
 let initialState = {
   words: [],

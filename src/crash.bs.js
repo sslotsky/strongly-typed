@@ -106,17 +106,27 @@ function crashSite() {
     sites[0] = tmp;
     return /* () */0;
   };
+  var covers = function (x, y) {
+    return List.exists((function (site) {
+                  if (site[/* left */0] <= x) {
+                    return site[/* right */1] >= y;
+                  } else {
+                    return false;
+                  }
+                }), sites[0]);
+  };
+  var percentCovered = function (x, y) {
+    var x$1 = x < y ? x : y;
+    var y$1 = x > y ? x : y;
+    var amountCovered = List.fold_left((function (sum, site) {
+            return sum + (Caml_primitive.caml_float_min(site[/* right */1], y$1) - Caml_primitive.caml_float_max(site[/* left */0], x$1));
+          }), 0.0, sites[0]);
+    return 100.0 * amountCovered / (y$1 - x$1);
+  };
   return /* record */[
           /* crash */crash,
-          /* covers */(function (x, y) {
-              return List.exists((function (site) {
-                            if (site[/* left */0] <= x) {
-                              return site[/* right */1] >= y;
-                            } else {
-                              return false;
-                            }
-                          }), sites[0]);
-            }),
+          /* covers */covers,
+          /* percentCovered */percentCovered,
           /* sites */(function () {
               return sites[0];
             })

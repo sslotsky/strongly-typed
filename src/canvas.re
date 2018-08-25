@@ -79,10 +79,9 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
     context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
     context->fillStyleSet("black");
     context->fillRect(0.0, 0.0, ui.width, ui.height);
+    context->fontSet(ui.fontSize->string_of_int ++ "px Arial");
 
     let newState = state->nextState(ui);
-
-    context->fontSet(ui.fontSize->string_of_int ++ "px Arial");
 
     List.iter(word => {
       let (input, text) = (ui.input(), word.text);
@@ -117,6 +116,18 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
     let (baseLeft, baseRight) = newState.base;
     context->fillStyleSet("red");
     context->fillRect(10.0, ui.height +. 10.0, min(100.0, newState.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
+
+    context->fontSet("20px Arial");
+    let inputWidth = ui.calculateWidth(ui.input());
+    let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
+
+    if (ui.input() != "") {
+      context->fillStyleSet("black");
+      context->fillRect(inputLeft -. 5.0, ui.height +. 5.0, inputWidth +. 10.0, 30.0);
+    };
+
+    context->fillStyleSet("purple");
+    context->fillText(ui.input(), inputLeft, ui.height +. 30.0);
 
     if (newState.gameOver) {
       let text = "GAME OVER";

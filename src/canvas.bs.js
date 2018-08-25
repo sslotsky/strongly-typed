@@ -57,8 +57,8 @@ function paint(dimensions, audioConfig, initialState, nextState) {
     context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
     context.fillStyle = "black";
     context.fillRect(0.0, 0.0, width, height);
-    var newState = Curry._2(nextState, state, ui);
     context.font = String(fontSize) + "px Arial";
+    var newState = Curry._2(nextState, state, ui);
     List.iter((function (word) {
             var input = Curry._1(ui_003, /* () */0);
             var text = word[/* text */0];
@@ -96,6 +96,16 @@ function paint(dimensions, audioConfig, initialState, nextState) {
     var match$1 = newState[/* base */3];
     context.fillStyle = "red";
     context.fillRect(10.0, height + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match$1[0], match$1[1])), 40.0 - 20.0);
+    context.font = "20px Arial";
+    var str = Curry._1(ui_003, /* () */0);
+    var inputWidth = context.measureText(str).width;
+    var inputLeft = width / 2.0 - inputWidth / 2.0;
+    if (Curry._1(ui_003, /* () */0) !== "") {
+      context.fillStyle = "black";
+      context.fillRect(inputLeft - 5.0, height + 5.0, inputWidth + 10.0, 30.0);
+    }
+    context.fillStyle = "purple";
+    context.fillText(Curry._1(ui_003, /* () */0), inputLeft, height + 30.0);
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px Arial";

@@ -1,8 +1,8 @@
 type word = {
   text: string,
   velocity: float,
-  mutable x: float,
-  mutable y: float
+  x: float,
+  y: float
 };
 
 type crashSite = {
@@ -18,9 +18,9 @@ type crashCollector = {
 };
 
 type state = {
-  mutable gameOver: bool,
-  mutable words: list(word),
-  mutable ticks: int,
+  gameOver: bool,
+  words: list(word),
+  ticks: int,
   base: (float, float),
   /* Represent what isn't there. "We don't have any no-cream." */
   crashCollector: crashCollector

@@ -16,15 +16,19 @@ if (match !== undefined) {
 
 Random.self_init(/* () */0);
 
+var initialState_003 = /* base : tuple */[
+  30.0,
+  1200.0 - 30.0
+];
+
+var initialState_004 = /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0);
+
 var initialState = /* record */[
   /* gameOver */false,
   /* words : [] */0,
   /* ticks */0,
-  /* base : tuple */[
-    30.0,
-    1200.0 - 30.0
-  ],
-  /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
+  initialState_003,
+  initialState_004
 ];
 
 Canvas$StronglyTyped.boot(600.0, 1200.0, 30, initialState, Game$StronglyTyped.nextState);

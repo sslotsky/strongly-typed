@@ -3,6 +3,7 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as $$String from "bs-platform/lib/es6/string.js";
+import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as Audio$StronglyTyped from "./audio.bs.js";
 import * as Crash$StronglyTyped from "./crash.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
@@ -53,7 +54,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
     ui_007
   ];
   var tick = function (state) {
-    context.clearRect(0, 0, width | 0, height | 0);
+    context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
     context.fillStyle = "black";
     context.fillRect(0.0, 0.0, width, height);
     var newState = Curry._2(nextState, state, ui);
@@ -88,6 +89,13 @@ function paint(dimensions, audioConfig, initialState, nextState) {
             context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
             return /* () */0;
           }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
+    context.fillStyle = "gray";
+    context.fillRect(0.0, height, width, 40.0);
+    context.fillStyle = "black";
+    context.fillRect(10.0, height + 10.0, 100.0, 40.0 - 20.0);
+    var match$1 = newState[/* base */3];
+    context.fillStyle = "red";
+    context.fillRect(10.0, height + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match$1[0], match$1[1])), 40.0 - 20.0);
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px Arial";
@@ -118,7 +126,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
 
 function boot(height, width, fontSize, initialState, nextState) {
   context.fillStyle = "black";
-  context.fillRect(0.0, 0.0, width, height);
+  context.fillRect(0.0, 0.0, width, height + 40.0);
   var text = "START GAME";
   context.font = "90px Arial";
   context.fillStyle = "purple";
@@ -155,11 +163,14 @@ function boot(height, width, fontSize, initialState, nextState) {
 
 var baseHeight = 5.0;
 
+var statusBarHeight = 40.0;
+
 export {
   canvas ,
   context ,
   calculateWidth ,
   baseHeight ,
+  statusBarHeight ,
   paint ,
   boot ,
   

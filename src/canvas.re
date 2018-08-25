@@ -38,6 +38,7 @@ let context = canvas->getContext("2d");
 let calculateWidth = str => context->measureText(str)->widthGet;
 
 let baseHeight = 5.0;
+let statusBarHeight = 40.0;
 
 type dimensions = {
   height: float,
@@ -75,7 +76,7 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
   };
 
   let rec tick = state => {
-    context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float);
+    context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
     context->fillStyleSet("black");
     context->fillRect(0.0, 0.0, ui.width, ui.height);
 
@@ -107,6 +108,16 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
       context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
     }, state.crashCollector.sites());
 
+    context->fillStyleSet("gray");
+    context->fillRect(0.0, ui.height, ui.width, statusBarHeight);
+
+    context->fillStyleSet("black");
+    context->fillRect(10.0, ui.height +. 10.0, 100.0, statusBarHeight -. 20.0);
+
+    let (baseLeft, baseRight) = newState.base;
+    context->fillStyleSet("red");
+    context->fillRect(10.0, ui.height +. 10.0, min(100.0, newState.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
+
     if (newState.gameOver) {
       let text = "GAME OVER";
       context->fontSet("90px Arial");
@@ -130,7 +141,7 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
 
 let boot = (height, width, fontSize, initialState, nextState) => {
   context->fillStyleSet("black");
-  context->fillRect(0.0, 0.0, width, height);
+  context->fillRect(0.0, 0.0, width, height +. statusBarHeight);
 
   let text = "START GAME";
   context->fontSet("90px Arial");

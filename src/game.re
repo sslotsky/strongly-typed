@@ -36,8 +36,8 @@ let nextState = (state, ui) => {
     let newWords = List.map(word => { ...word, y: word.y +. word.velocity }, remaining);
 
     let newWords = switch (state.ticks mod 70) {
-      | 0 => newWords->List.append([ui->spawn])
-      | _ => newWords
+    | 0 => newWords->List.append([ui->spawn])
+    | _ => newWords
     };
 
     let gameOver = state.crashCollector.covers(baseLeft, baseRight);

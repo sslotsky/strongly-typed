@@ -143,7 +143,7 @@ function boot(height, width, fontSize, initialState, nextState) {
   context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
   var startGame = function () {
     canvas.removeEventListener("click", startGame);
-    var ctx = new AudioContext();
+    var ctx = Audio$StronglyTyped.audioContext(/* () */0);
     var loadBoom = Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default);
     var loadCollect = Audio$StronglyTyped.loadSound(ctx, SFX_Pickup_01Wav.default);
     loadBoom.then((function (boomSound) {

@@ -4,7 +4,11 @@
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
-    "clean": "bsb -clean-world"
+    "clean": "bsb -clean-world",
+    "deploy": "yarn build && yarn clean-dist && yarn build-dist && yarn dist",
+    "clean-dist": "rm -r dist/*",
+    "build-dist": "yarn parcel build index.html",
+    "dist": "cd dist; surge --domain lavish-balloon.surge.sh"
   },
   "keywords": [
     "BuckleScript"

@@ -22,6 +22,7 @@ type httpRequest = {
 };
 
 [@bs.new] external audioContext: unit => audioContext = "AudioContext";
+[@bs.new] external webkitAudioContext: unit => audioContext = "webkitAudioContext";
 [@bs.new] external request: unit => httpRequest = "XMLHttpRequest";
 [@bs.send] external openRequest: (httpRequest, string, string, bool) => unit = "open";
 [@bs.send] external sendRequest: (httpRequest, unit) => unit = "send";
@@ -29,6 +30,13 @@ type httpRequest = {
 [@bs.send] external createBufferSource: (audioContext, unit) => source = "createBufferSource";
 [@bs.send] external connect: (source, destination) => unit = "connect";
 [@bs.send] external start: (source, int) => unit = "start";
+
+let audioContext = () => {
+  switch (audioContext()) {
+  | ctx => ctx
+  | exception _ => webkitAudioContext()
+  }
+};
 
 let loadSound = (ctx, filename) => {
   Js.Promise.make((~resolve, ~reject as _) => {

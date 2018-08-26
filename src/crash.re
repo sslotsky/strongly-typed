@@ -5,19 +5,18 @@ let crashSite = () => {
 
   let crash = site => {
     let (leftSide, rightSide) = List.partition(s => s.left <= site.left, sites^);
+    let (overlap, rest) = List.partition(s => s.left <= site.right, rightSide);
 
-    let rightSide = switch(rightSide) {
-    | [s] when site.right >= s.left => [{ left: site.left, right: max(site.right, s.right) }]
-    | [s, ...rest] when site.right >= s.left => List.append([{ left: site.left, right: max(site.right, s.right) }], rest)
-    | _ => [site, ...rightSide]
-    };
+    let rightSide = switch(overlap) {
+    | [] => [site, ...rightSide]
+    | _ => let closest = overlap->List.rev->List.hd; [{ left: site.left, right: max(site.right, closest.right) }, ...rest]
+    }
 
     let site = List.hd(rightSide);
 
     let leftSide = switch (leftSide->List.rev) {
-    | [s] when s.right >= site.left => [{ left: s.left, right: max(site.right, s.right) }]
-    | [s, ...rest] when s.right >= site.left => List.append(List.rev(rest), [{ left: s.left, right: max(site.right, s.right) }])
-    | _ => List.append(leftSide, [site])
+    | [s, ...rest] when s.right >= site.left => rest->List.rev->List.append([{ left: s.left, right: max(site.right, s.right) }])
+    | _ => leftSide->List.append([site])
     };
 
     sites := switch (List.tl(rightSide)) {

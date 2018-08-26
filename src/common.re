@@ -27,6 +27,7 @@ type state = {
 };
 
 type ui = {
+  score: unit => int,
   height: float,
   width: float,
   fontSize: int,

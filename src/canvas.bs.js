@@ -3,6 +3,7 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as $$String from "bs-platform/lib/es6/string.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as Audio$StronglyTyped from "./audio.bs.js";
 import * as Crash$StronglyTyped from "./crash.bs.js";
@@ -18,6 +19,29 @@ function calculateWidth(str) {
   return context.measureText(str).width;
 }
 
+function drawStatusBar(ui, newState) {
+  context.fillStyle = "gray";
+  context.fillRect(0.0, ui[/* height */1], ui[/* width */2], 40.0);
+  context.fillStyle = "black";
+  context.fillRect(10.0, ui[/* height */1] + 10.0, 100.0, 40.0 - 20.0);
+  var match = newState[/* base */3];
+  context.fillStyle = "red";
+  context.fillRect(10.0, ui[/* height */1] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
+  context.font = "20px Arial";
+  var inputWidth = Curry._1(ui[/* calculateWidth */6], Curry._1(ui[/* input */4], /* () */0));
+  var inputLeft = ui[/* width */2] / 2.0 - inputWidth / 2.0;
+  if (Curry._1(ui[/* input */4], /* () */0) !== "") {
+    context.fillStyle = "black";
+    context.fillRect(inputLeft - 5.0, ui[/* height */1] + 5.0, inputWidth + 10.0, 30.0);
+  }
+  context.fillStyle = "purple";
+  context.fillText(Curry._1(ui[/* input */4], /* () */0), inputLeft, ui[/* height */1] + 30.0);
+  var width = Curry._1(ui[/* calculateWidth */6], String(Curry._1(ui[/* score */0], /* () */0)));
+  context.fillStyle = "red";
+  context.fillText(String(Curry._1(ui[/* score */0], /* () */0)), ui[/* width */2] - width, ui[/* height */1] + 30.0);
+  return /* () */0;
+}
+
 function paint(dimensions, audioConfig, initialState, nextState) {
   var audioContext = audioConfig[/* audioContext */2];
   var collectSound = audioConfig[/* collectSound */1];
@@ -26,6 +50,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
   var width = dimensions[/* width */1];
   var height = dimensions[/* height */0];
   var input = /* record */[/* contents */""];
+  var score = /* record */[/* contents */0];
   var clearInput = function () {
     input[0] = "";
     return /* () */0;
@@ -34,24 +59,31 @@ function paint(dimensions, audioConfig, initialState, nextState) {
           input[0] = input[0] + e.key;
           return /* () */0;
         }));
-  var ui_003 = function () {
+  var ui_000 = function () {
+    return score[0];
+  };
+  var ui_004 = function () {
     return input[0];
   };
-  var ui_006 = function () {
+  var ui_007 = function () {
     return Audio$StronglyTyped.playSound(audioContext, boomSound);
   };
-  var ui_007 = function () {
-    return Audio$StronglyTyped.playSound(audioContext, collectSound);
+  var ui_008 = function (word) {
+    Audio$StronglyTyped.playSound(audioContext, collectSound);
+    score[0] = score[0] + Caml_int32.imul(word[/* text */0].length, 10.0 * word[/* velocity */1] | 0) | 0;
+    console.log(score);
+    return /* () */0;
   };
   var ui = /* record */[
+    ui_000,
     /* height */height,
     /* width */width,
     /* fontSize */fontSize,
-    ui_003,
+    ui_004,
     /* clearInput */clearInput,
     /* calculateWidth */calculateWidth,
-    ui_006,
-    ui_007
+    ui_007,
+    ui_008
   ];
   var tick = function (state) {
     context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
@@ -60,7 +92,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
     context.font = String(fontSize) + "px Arial";
     var newState = Curry._2(nextState, state, ui);
     List.iter((function (word) {
-            var input = Curry._1(ui_003, /* () */0);
+            var input = Curry._1(ui_004, /* () */0);
             var text = word[/* text */0];
             var match = Common$StronglyTyped.startsWith(input, word);
             var match$1 = input.length;
@@ -89,23 +121,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
             context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
             return /* () */0;
           }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
-    context.fillStyle = "gray";
-    context.fillRect(0.0, height, width, 40.0);
-    context.fillStyle = "black";
-    context.fillRect(10.0, height + 10.0, 100.0, 40.0 - 20.0);
-    var match$1 = newState[/* base */3];
-    context.fillStyle = "red";
-    context.fillRect(10.0, height + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match$1[0], match$1[1])), 40.0 - 20.0);
-    context.font = "20px Arial";
-    var str = Curry._1(ui_003, /* () */0);
-    var inputWidth = context.measureText(str).width;
-    var inputLeft = width / 2.0 - inputWidth / 2.0;
-    if (Curry._1(ui_003, /* () */0) !== "") {
-      context.fillStyle = "black";
-      context.fillRect(inputLeft - 5.0, height + 5.0, inputWidth + 10.0, 30.0);
-    }
-    context.fillStyle = "purple";
-    context.fillText(Curry._1(ui_003, /* () */0), inputLeft, height + 30.0);
+    drawStatusBar(ui, newState);
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px Arial";
@@ -181,6 +197,7 @@ export {
   calculateWidth ,
   baseHeight ,
   statusBarHeight ,
+  drawStatusBar ,
   paint ,
   boot ,
   

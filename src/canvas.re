@@ -52,9 +52,38 @@ type audioConfig = {
   audioContext: Audio.audioContext
 };
 
+let drawStatusBar = (ui: ui, newState) => {
+  context->fillStyleSet("gray");
+  context->fillRect(0.0, ui.height, ui.width, statusBarHeight);
+
+  context->fillStyleSet("black");
+  context->fillRect(10.0, ui.height +. 10.0, 100.0, statusBarHeight -. 20.0);
+
+  let (baseLeft, baseRight) = newState.base;
+  context->fillStyleSet("red");
+  context->fillRect(10.0, ui.height +. 10.0, min(100.0, newState.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
+
+  context->fontSet("20px Arial");
+  let inputWidth = ui.calculateWidth(ui.input());
+  let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
+
+  if (ui.input() != "") {
+    context->fillStyleSet("black");
+    context->fillRect(inputLeft -. 5.0, ui.height +. 5.0, inputWidth +. 10.0, 30.0);
+  };
+
+  context->fillStyleSet("purple");
+  context->fillText(ui.input(), inputLeft, ui.height +. 30.0);
+
+  let width = ui.calculateWidth(ui.score()->string_of_int);
+  context->fillStyleSet("red");
+  context->fillText(ui.score()->string_of_int, ui.width -. width, ui.height +. 30.0);
+};
+
 let paint = (dimensions, audioConfig, initialState, nextState) => {
   let ({width, height, fontSize}, {audioContext, boomSound, collectSound}) = (dimensions, audioConfig);
   let input = ref("");
+  let score = ref(0);
 
   let clearInput = () => {
     input := "";
@@ -71,8 +100,13 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
     input: () => input^,
     clearInput,
     calculateWidth,
+    score: () => score^,
     onCrash: _ => audioContext->playSound(boomSound),
-    onCollect: _ => audioContext->playSound(collectSound)
+    onCollect: word => {
+      audioContext->playSound(collectSound);
+      score := score^ + (word.text->String.length * (10.0 *. word.velocity)->int_of_float);
+      Js.log(score);
+    }
   };
 
   let rec tick = state => {
@@ -107,27 +141,7 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
       context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
     }, state.crashCollector.sites());
 
-    context->fillStyleSet("gray");
-    context->fillRect(0.0, ui.height, ui.width, statusBarHeight);
-
-    context->fillStyleSet("black");
-    context->fillRect(10.0, ui.height +. 10.0, 100.0, statusBarHeight -. 20.0);
-
-    let (baseLeft, baseRight) = newState.base;
-    context->fillStyleSet("red");
-    context->fillRect(10.0, ui.height +. 10.0, min(100.0, newState.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
-
-    context->fontSet("20px Arial");
-    let inputWidth = ui.calculateWidth(ui.input());
-    let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
-
-    if (ui.input() != "") {
-      context->fillStyleSet("black");
-      context->fillRect(inputLeft -. 5.0, ui.height +. 5.0, inputWidth +. 10.0, 30.0);
-    };
-
-    context->fillStyleSet("purple");
-    context->fillText(ui.input(), inputLeft, ui.height +. 30.0);
+    drawStatusBar(ui, newState);
 
     if (newState.gameOver) {
       let text = "GAME OVER";

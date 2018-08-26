@@ -28,7 +28,6 @@ let nextState = (state, ui) => {
       };
 
       state.crashCollector.crash({ left, right });
-      Js.log(state.crashCollector.percentCovered(baseLeft, baseRight));
     }, crashed);
 
     List.iter(ui.onCollect, captured);

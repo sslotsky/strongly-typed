@@ -13,7 +13,7 @@ type parcelModule = {
 
 switch (parcelModule->hotGet) {
 | Some(h) => h->accept()
-| _ => Js.log("We are not hot")
+| _ => ()
 };
 
 Random.self_init();

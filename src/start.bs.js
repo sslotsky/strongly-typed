@@ -10,8 +10,6 @@ var match = module.hot;
 
 if (match !== undefined) {
   Js_primitive.valFromOption(match).accept();
-} else {
-  console.log("We are not hot");
 }
 
 Random.self_init(/* () */0);

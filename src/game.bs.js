@@ -72,12 +72,12 @@ var words = /* :: */[
 
 function spawn(ui) {
   var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-  var max = ui[/* width */2] - Curry._1(ui[/* calculateWidth */6], word);
+  var max = ui[/* width */3] - Curry._1(ui[/* calculateWidth */7], word);
   return /* record */[
           /* text */word,
           /* velocity */1.5 + Random.$$float(2.5),
           /* x */Random.$$float(max),
-          /* y */ui[/* fontSize */3]
+          /* y */ui[/* fontSize */4]
         ];
 }
 
@@ -86,11 +86,11 @@ function nextState(state, ui) {
     return state;
   } else {
     var match = List.partition((function (w) {
-            return w[/* text */0] === Curry._1(ui[/* input */4], /* () */0);
+            return w[/* text */0] === Curry._1(ui[/* input */5], /* () */0);
           }), state[/* words */1]);
     var captured = match[0];
     var match$1 = List.partition((function (w) {
-            return w[/* y */3] > ui[/* height */1];
+            return w[/* y */3] > ui[/* height */2];
           }), match[1]);
     var remaining = match$1[1];
     var match$2 = state[/* base */3];
@@ -98,28 +98,26 @@ function nextState(state, ui) {
     var baseLeft = match$2[0];
     var tmp = true;
     if (List.length(captured) <= 0) {
-      var partial_arg = Curry._1(ui[/* input */4], /* () */0);
+      var partial_arg = Curry._1(ui[/* input */5], /* () */0);
       tmp = !List.exists((function (param) {
               return Common$StronglyTyped.startsWith(partial_arg, param);
             }), remaining);
     }
     if (tmp) {
-      Curry._1(ui[/* clearInput */5], /* () */0);
+      Curry._1(ui[/* clearInput */6], /* () */0);
     }
     List.iter((function (word) {
             var left = word[/* x */2];
-            var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */6], word[/* text */0]);
+            var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */7], word[/* text */0]);
             if (!Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
-              Curry._1(ui[/* onCrash */7], word);
+              Curry._1(ui[/* onCrash */8], word);
             }
-            Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
-                  /* left */left,
-                  /* right */right
-                ]);
-            console.log(Curry._2(state[/* crashCollector */4][/* percentCovered */2], baseLeft, baseRight));
-            return /* () */0;
+            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+                        /* left */left,
+                        /* right */right
+                      ]);
           }), match$1[0]);
-    List.iter(ui[/* onCollect */8], captured);
+    List.iter(ui[/* onCollect */9], captured);
     var newWords = List.map((function (word) {
             return /* record */[
                     /* text */word[/* text */0],

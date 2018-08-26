@@ -21,24 +21,24 @@ function calculateWidth(str) {
 
 function drawStatusBar(ui, newState) {
   context.fillStyle = "gray";
-  context.fillRect(0.0, ui[/* height */1], ui[/* width */2], 40.0);
+  context.fillRect(0.0, ui[/* height */2], ui[/* width */3], 40.0);
   context.fillStyle = "black";
-  context.fillRect(10.0, ui[/* height */1] + 10.0, 100.0, 40.0 - 20.0);
+  context.fillRect(10.0, ui[/* height */2] + 10.0, 100.0, 40.0 - 20.0);
   var match = newState[/* base */3];
   context.fillStyle = "red";
-  context.fillRect(10.0, ui[/* height */1] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
+  context.fillRect(10.0, ui[/* height */2] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
   context.font = "20px Arial";
-  var inputWidth = Curry._1(ui[/* calculateWidth */6], Curry._1(ui[/* input */4], /* () */0));
-  var inputLeft = ui[/* width */2] / 2.0 - inputWidth / 2.0;
-  if (Curry._1(ui[/* input */4], /* () */0) !== "") {
+  var inputWidth = Curry._1(ui[/* calculateWidth */7], Curry._1(ui[/* input */5], /* () */0));
+  var inputLeft = ui[/* width */3] / 2.0 - inputWidth / 2.0;
+  if (Curry._1(ui[/* input */5], /* () */0) !== "") {
     context.fillStyle = "black";
-    context.fillRect(inputLeft - 5.0, ui[/* height */1] + 5.0, inputWidth + 10.0, 30.0);
+    context.fillRect(inputLeft - 5.0, ui[/* height */2] + 5.0, inputWidth + 10.0, 30.0);
   }
   context.fillStyle = "purple";
-  context.fillText(Curry._1(ui[/* input */4], /* () */0), inputLeft, ui[/* height */1] + 30.0);
-  var width = Curry._1(ui[/* calculateWidth */6], String(Curry._1(ui[/* score */0], /* () */0)));
+  context.fillText(Curry._1(ui[/* input */5], /* () */0), inputLeft, ui[/* height */2] + 30.0);
+  var width = Curry._1(ui[/* calculateWidth */7], String(Curry._1(ui[/* score */1], /* () */0)));
   context.fillStyle = "red";
-  context.fillText(String(Curry._1(ui[/* score */0], /* () */0)), ui[/* width */2] - width, ui[/* height */1] + 30.0);
+  context.fillText(String(Curry._1(ui[/* score */1], /* () */0)), ui[/* width */3] - width, ui[/* height */2] + 30.0);
   return /* () */0;
 }
 
@@ -59,31 +59,36 @@ function paint(dimensions, audioConfig, initialState, nextState) {
           input[0] = input[0] + e.key;
           return /* () */0;
         }));
-  var ui_000 = function () {
+  var reset = function () {
+    input[0] = "";
+    score[0] = 0;
+    return /* () */0;
+  };
+  var ui_001 = function () {
     return score[0];
   };
-  var ui_004 = function () {
+  var ui_005 = function () {
     return input[0];
   };
-  var ui_007 = function () {
+  var ui_008 = function () {
     return Audio$StronglyTyped.playSound(audioContext, boomSound);
   };
-  var ui_008 = function (word) {
+  var ui_009 = function (word) {
     Audio$StronglyTyped.playSound(audioContext, collectSound);
     score[0] = score[0] + Caml_int32.imul(word[/* text */0].length, 10.0 * word[/* velocity */1] | 0) | 0;
-    console.log(score);
     return /* () */0;
   };
   var ui = /* record */[
-    ui_000,
+    /* reset */reset,
+    ui_001,
     /* height */height,
     /* width */width,
     /* fontSize */fontSize,
-    ui_004,
+    ui_005,
     /* clearInput */clearInput,
     /* calculateWidth */calculateWidth,
-    ui_007,
-    ui_008
+    ui_008,
+    ui_009
   ];
   var tick = function (state) {
     context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
@@ -92,7 +97,7 @@ function paint(dimensions, audioConfig, initialState, nextState) {
     context.font = String(fontSize) + "px Arial";
     var newState = Curry._2(nextState, state, ui);
     List.iter((function (word) {
-            var input = Curry._1(ui_004, /* () */0);
+            var input = Curry._1(ui_005, /* () */0);
             var text = word[/* text */0];
             var match = Common$StronglyTyped.startsWith(input, word);
             var match$1 = input.length;
@@ -127,8 +132,8 @@ function paint(dimensions, audioConfig, initialState, nextState) {
       context.font = "90px Arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
-      console.log(initialState[/* gameOver */0]);
       var restart = function () {
+        reset(/* () */0);
         canvas.removeEventListener("click", restart);
         return tick(/* record */[
                     /* gameOver */initialState[/* gameOver */0],

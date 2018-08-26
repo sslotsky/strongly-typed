@@ -93,7 +93,13 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
     input := (input^) ++ e->keyGet;
   });
 
+  let reset = () => {
+    input := "";
+    score := 0;
+  };
+
   let ui = {
+    reset,
     height,
     width,
     fontSize,
@@ -105,7 +111,6 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
     onCollect: word => {
       audioContext->playSound(collectSound);
       score := score^ + (word.text->String.length * (10.0 *. word.velocity)->int_of_float);
-      Js.log(score);
     }
   };
 
@@ -149,8 +154,8 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (ui.calculateWidth(text) /. 2.0), ui.height /. 2.0);
 
-      Js.log(initialState.gameOver);
       let rec restart = _ => {
+        ui.reset();
         canvas->unsubscribe("click", restart);
         { ...initialState, crashCollector: Crash.crashSite() }->tick;
       };

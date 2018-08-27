@@ -25,9 +25,9 @@ let nextState = (state, ui) => {
 
       if (!state.crashCollector.covers(max(baseLeft, left), min(baseRight, right))) {
         ui.onCrash(word);
+        state.crashCollector.crash({ left, right });
       };
 
-      state.crashCollector.crash({ left, right });
     }, crashed);
 
     List.iter(ui.onCollect, captured);

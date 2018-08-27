@@ -109,13 +109,15 @@ function nextState(state, ui) {
     List.iter((function (word) {
             var left = word[/* x */2];
             var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */7], word[/* text */0]);
-            if (!Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
+            if (Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
+              return 0;
+            } else {
               Curry._1(ui[/* onCrash */8], word);
+              return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+                          /* left */left,
+                          /* right */right
+                        ]);
             }
-            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
-                        /* left */left,
-                        /* right */right
-                      ]);
           }), match$1[0]);
     List.iter(ui[/* onCollect */9], captured);
     var newWords = List.map((function (word) {

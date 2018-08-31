@@ -8,11 +8,11 @@ type parcelModule = {
 };
 
 [@bs.val] external parcelModule: parcelModule = "module";
-[@bs.send] external accept: (hot, unit) => unit = "accept";
+[@bs.send] external accept: (hot, unit => unit) => unit = "accept";
 
 
 switch (parcelModule->hotGet) {
-| Some(h) => h->accept()
+| Some(h) => h->accept(() => Js.log("sooooo hot right now"))
 | _ => ()
 };
 

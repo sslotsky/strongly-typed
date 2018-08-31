@@ -46,5 +46,5 @@ type ui = {
   onCollect: word => unit
 };
 
-let startsWithStr = (input, str) => str->Js.Re.test(("^" ++ input)->Js.Re.fromString);
-let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);
+let startsWith = (str, input) => str->Js.Re.test(("^" ++ input)->Js.Re.fromString);
+let isPrefixOf = (input, word) => word.text->startsWith(input);

@@ -9,7 +9,10 @@ import * as Canvas$StronglyTyped from "./canvas.bs.js";
 var match = module.hot;
 
 if (match !== undefined) {
-  Js_primitive.valFromOption(match).accept();
+  Js_primitive.valFromOption(match).accept((function () {
+          console.log("sooooo hot right now");
+          return /* () */0;
+        }));
 }
 
 Random.self_init(/* () */0);

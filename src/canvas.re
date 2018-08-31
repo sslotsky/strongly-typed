@@ -75,7 +75,7 @@ let drawStatusBar = (ui: ui, newState) => {
   context->fillStyleSet("red");
   context->fillRect(10.0, ui.height +. 10.0, min(100.0, newState.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
 
-  context->fontSet("20px Arial");
+  context->fontSet("20px bold arial");
   let inputWidth = ui.calculateWidth(ui.input());
   let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
 
@@ -84,7 +84,7 @@ let drawStatusBar = (ui: ui, newState) => {
     context->fillRect(inputLeft -. 5.0, ui.height +. 5.0, inputWidth +. 10.0, 30.0);
   };
 
-  context->fillStyleSet("purple");
+  context->fillStyleSet("lime");
   context->fillText(ui.input(), inputLeft, ui.height +. 30.0);
 
   let width = ui.calculateWidth(ui.score()->string_of_int);
@@ -92,28 +92,32 @@ let drawStatusBar = (ui: ui, newState) => {
   context->fillText(ui.score()->string_of_int, ui.width -. width, ui.height +. 30.0);
 };
 
+let splitText = (text, input, left, bottom, color, matchColor) => {
+  let (matching, rest) = switch(text->startsWith(input), input->String.length, text->String.length) {
+  | (true, inputLength, wordLength) => (input, text->String.sub(inputLength, wordLength - inputLength))
+  | _ => ("", text)
+  };
+
+  let continue = left +. context->measureText(matching)->widthGet;
+  context->fillStyleSet(matchColor);
+  context->fillText(matching, left, bottom);
+  context->fillStyleSet(color);
+  context->fillText(rest, continue, bottom);
+};
+
 let drawBonus = (bonus: bonus, image, ui) => {
   context->drawImage(image, bonus.x, bonus.startY +. bonus.offsetY);
   let imageWidth = image->imageWidthGet;
   let imageCenter = bonus.x +. (imageWidth->float_of_int /. 2.0);
 
-  context->fontSet("16px Arial");
+  context->fontSet("16px arial");
   context->fillStyleSet("white");
   let text = "manifold";
   let textWidth = calculateWidth(text);
   let textLeft = imageCenter -. (textWidth /. 2.0);
   let textBottom = bonus.startY +. bonus.offsetY +. image->imageHeightGet->float_of_int +. 18.0;
 
-  let (matching, rest) = switch(ui.input()->startsWithStr(text), ui.input()->String.length, text->String.length) {
-  | (true, inputLength, wordLength) => (ui.input(), text->String.sub(inputLength, wordLength - inputLength))
-  | _ => ("", text)
-  };
-
-  let continue = textLeft +. context->measureText(matching)->widthGet;
-  context->fillStyleSet("green");
-  context->fillText(matching, textLeft, textBottom);
-  context->fillStyleSet("white");
-  context->fillText(rest, continue, textBottom);
+  splitText(text, ui.input(), textLeft, textBottom, "white", "lime");
 };
 
 let paint = (dimensions, assetConfig, initialState, nextState) => {
@@ -154,23 +158,12 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
     context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
     context->fillStyleSet("black");
     context->fillRect(0.0, 0.0, ui.width, ui.height);
-    context->fontSet(ui.fontSize->string_of_int ++ "px Arial");
+    context->fontSet(ui.fontSize->string_of_int ++ "px arial");
 
     let newState = state->nextState(ui);
 
     List.iter(word => {
-      let (input, text) = (ui.input(), word.text);
-
-      let (matching, rest) = switch(input->startsWith(word), input->String.length, text->String.length) {
-      | (true, inputLength, wordLength) => (input, text->String.sub(inputLength, wordLength - inputLength))
-      | _ => ("", word.text)
-      };
-
-      let continue = word.x +. context->measureText(matching)->widthGet;
-      context->fillStyleSet("red");
-      context->fillText(matching, word.x, word.y);
-      context->fillStyleSet("blue");
-      context->fillText(rest, continue, word.y);
+      splitText(word.text, ui.input(), word.x, word.y, "blue", "red");
     }, newState.words);
 
     let (baseLeft, baseRight) = state.base;
@@ -191,7 +184,7 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
 
     if (newState.gameOver) {
       let text = "GAME OVER";
-      context->fontSet("90px Arial");
+      context->fontSet("90px arial");
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (ui.calculateWidth(text) /. 2.0), ui.height /. 2.0);
 
@@ -215,7 +208,7 @@ let boot = (height, width, fontSize, initialState, nextState) => {
   context->fillRect(0.0, 0.0, width, height +. statusBarHeight);
 
   let text = "START GAME";
-  context->fontSet("90px Arial");
+  context->fontSet("90px arial");
   context->fillStyleSet("purple");
   context->fillText(text, (width /. 2.0) -. (calculateWidth(text) /. 2.0), height /. 2.0);
 

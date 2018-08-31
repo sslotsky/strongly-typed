@@ -28,14 +28,14 @@ function drawStatusBar(ui, newState) {
   var match = newState[/* base */3];
   context.fillStyle = "red";
   context.fillRect(10.0, ui[/* height */2] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
-  context.font = "20px Arial";
+  context.font = "20px bold arial";
   var inputWidth = Curry._1(ui[/* calculateWidth */7], Curry._1(ui[/* input */5], /* () */0));
   var inputLeft = ui[/* width */3] / 2.0 - inputWidth / 2.0;
   if (Curry._1(ui[/* input */5], /* () */0) !== "") {
     context.fillStyle = "black";
     context.fillRect(inputLeft - 5.0, ui[/* height */2] + 5.0, inputWidth + 10.0, 30.0);
   }
-  context.fillStyle = "purple";
+  context.fillStyle = "lime";
   context.fillText(Curry._1(ui[/* input */5], /* () */0), inputLeft, ui[/* height */2] + 30.0);
   var width = Curry._1(ui[/* calculateWidth */7], String(Curry._1(ui[/* score */1], /* () */0)));
   context.fillStyle = "red";
@@ -43,33 +43,37 @@ function drawStatusBar(ui, newState) {
   return /* () */0;
 }
 
-function drawBonus(bonus, image, ui) {
-  context.drawImage(image, bonus[/* x */0], bonus[/* startY */1] + bonus[/* offsetY */2]);
-  var imageWidth = image.width;
-  var imageCenter = bonus[/* x */0] + imageWidth / 2.0;
-  context.font = "16px Arial";
-  context.fillStyle = "white";
-  var text = "manifold";
-  var textWidth = context.measureText(text).width;
-  var textLeft = imageCenter - textWidth / 2.0;
-  var textBottom = bonus[/* startY */1] + bonus[/* offsetY */2] + image.height + 18.0;
-  var match = Common$StronglyTyped.startsWithStr(Curry._1(ui[/* input */5], /* () */0), text);
-  var match$1 = Curry._1(ui[/* input */5], /* () */0).length;
+function splitText(text, input, left, bottom, color, matchColor) {
+  var match = Common$StronglyTyped.startsWith(text, input);
+  var match$1 = input.length;
   var match$2 = text.length;
   var match$3 = match ? /* tuple */[
-      Curry._1(ui[/* input */5], /* () */0),
+      input,
       $$String.sub(text, match$1, match$2 - match$1 | 0)
     ] : /* tuple */[
       "",
       text
     ];
   var matching = match$3[0];
-  var $$continue = textLeft + context.measureText(matching).width;
-  context.fillStyle = "green";
-  context.fillText(matching, textLeft, textBottom);
-  context.fillStyle = "white";
-  context.fillText(match$3[1], $$continue, textBottom);
+  var $$continue = left + context.measureText(matching).width;
+  context.fillStyle = matchColor;
+  context.fillText(matching, left, bottom);
+  context.fillStyle = color;
+  context.fillText(match$3[1], $$continue, bottom);
   return /* () */0;
+}
+
+function drawBonus(bonus, image, ui) {
+  context.drawImage(image, bonus[/* x */0], bonus[/* startY */1] + bonus[/* offsetY */2]);
+  var imageWidth = image.width;
+  var imageCenter = bonus[/* x */0] + imageWidth / 2.0;
+  context.font = "16px arial";
+  context.fillStyle = "white";
+  var text = "manifold";
+  var textWidth = context.measureText(text).width;
+  var textLeft = imageCenter - textWidth / 2.0;
+  var textBottom = bonus[/* startY */1] + bonus[/* offsetY */2] + image.height + 18.0;
+  return splitText(text, Curry._1(ui[/* input */5], /* () */0), textLeft, textBottom, "white", "lime");
 }
 
 function paint(dimensions, assetConfig, initialState, nextState) {
@@ -125,28 +129,10 @@ function paint(dimensions, assetConfig, initialState, nextState) {
     context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
     context.fillStyle = "black";
     context.fillRect(0.0, 0.0, width, height);
-    context.font = String(fontSize) + "px Arial";
+    context.font = String(fontSize) + "px arial";
     var newState = Curry._2(nextState, state, ui);
     List.iter((function (word) {
-            var input = Curry._1(ui_005, /* () */0);
-            var text = word[/* text */0];
-            var match = Common$StronglyTyped.startsWith(input, word);
-            var match$1 = input.length;
-            var match$2 = text.length;
-            var match$3 = match ? /* tuple */[
-                input,
-                $$String.sub(text, match$1, match$2 - match$1 | 0)
-              ] : /* tuple */[
-                "",
-                word[/* text */0]
-              ];
-            var matching = match$3[0];
-            var $$continue = word[/* x */2] + context.measureText(matching).width;
-            context.fillStyle = "red";
-            context.fillText(matching, word[/* x */2], word[/* y */3]);
-            context.fillStyle = "blue";
-            context.fillText(match$3[1], $$continue, word[/* y */3]);
-            return /* () */0;
+            return splitText(word[/* text */0], Curry._1(ui_005, /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
           }), newState[/* words */1]);
     var match = state[/* base */3];
     var baseLeft = match[0];
@@ -164,7 +150,7 @@ function paint(dimensions, assetConfig, initialState, nextState) {
     }
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
-      context.font = "90px Arial";
+      context.font = "90px arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
       var restart = function () {
@@ -195,7 +181,7 @@ function boot(height, width, fontSize, initialState, nextState) {
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height + 40.0);
   var text = "START GAME";
-  context.font = "90px Arial";
+  context.font = "90px arial";
   context.fillStyle = "purple";
   context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
   var startGame = function () {
@@ -245,6 +231,7 @@ export {
   baseHeight ,
   statusBarHeight ,
   drawStatusBar ,
+  splitText ,
   drawBonus ,
   paint ,
   boot ,

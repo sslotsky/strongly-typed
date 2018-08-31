@@ -7,48 +7,51 @@ import * as Bonus$StronglyTyped from "./bonus.bs.js";
 import * as Common$StronglyTyped from "./common.bs.js";
 
 var words = /* :: */[
-  "Logging",
+  "Messaging",
   /* :: */[
-    "Memory Store",
+    "Logging",
     /* :: */[
-      "postgresql",
+      "Memory Store",
       /* :: */[
-        "kubernetes",
+        "postgresql",
         /* :: */[
-          "terraform",
+          "kubernetes",
           /* :: */[
-            "mysql",
+            "terraform",
             /* :: */[
-              "serverless",
+              "mysql",
               /* :: */[
-                "containerization",
+                "serverless",
                 /* :: */[
-                  "scalability",
+                  "containerization",
                   /* :: */[
-                    "Redis",
+                    "scalability",
                     /* :: */[
-                      "RabbitMQ",
+                      "Redis",
                       /* :: */[
-                        "machine learning",
+                        "RabbitMQ",
                         /* :: */[
-                          "analytics",
+                          "machine learning",
                           /* :: */[
-                            "Optimization",
+                            "analytics",
                             /* :: */[
-                              "CMS",
+                              "Optimization",
                               /* :: */[
-                                "Elastic",
+                                "CMS",
                                 /* :: */[
-                                  "Algolia",
+                                  "Elastic",
                                   /* :: */[
-                                    "Jaws",
+                                    "Algolia",
                                     /* :: */[
-                                      "Timber",
+                                      "Jaws",
                                       /* :: */[
-                                        "Iron",
+                                        "Timber",
                                         /* :: */[
-                                          "Piio",
-                                          /* [] */0
+                                          "Iron",
+                                          /* :: */[
+                                            "Piio",
+                                            /* [] */0
+                                          ]
                                         ]
                                       ]
                                     ]
@@ -108,10 +111,10 @@ function collect(state, ui) {
   var baseRight = match$2[1];
   var baseLeft = match$2[0];
   var match$3 = state[/* bonus */5];
-  var matchesBonus = match$3 !== undefined ? Common$StronglyTyped.startsWithStr(Curry._1(ui[/* input */5], /* () */0), "manifold") : false;
+  var matchesBonus = match$3 !== undefined ? Common$StronglyTyped.startsWith("manifold", Curry._1(ui[/* input */5], /* () */0)) : false;
   var partial_arg = Curry._1(ui[/* input */5], /* () */0);
   var matchesWord = List.exists((function (param) {
-          return Common$StronglyTyped.startsWith(partial_arg, param);
+          return Common$StronglyTyped.isPrefixOf(partial_arg, param);
         }), remaining);
   if (List.length(captured) > 0 || !(matchesBonus || matchesWord)) {
     Curry._1(ui[/* clearInput */6], /* () */0);

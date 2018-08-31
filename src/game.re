@@ -1,6 +1,6 @@
 open Common;
 
-let words = ["Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
+let words = ["Messaging", "Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
 
 let spawn = ui => {
   let word = words->List.nth(Random.int(words->List.length - 1));
@@ -21,10 +21,10 @@ let collect = (state: state, ui) => {
 
   let matchesBonus = switch(state.bonus) {
   | None => false
-  | Some(_) => ui.input()->startsWithStr("manifold")
+  | Some(_) => "manifold"->startsWith(ui.input())
   };
 
-  let matchesWord = List.exists(ui.input()->startsWith, remaining);
+  let matchesWord = List.exists(ui.input()->isPrefixOf, remaining);
 
   if (captured->List.length > 0 || !(matchesBonus || matchesWord)) {
     ui.clearInput();

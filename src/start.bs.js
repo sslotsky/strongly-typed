@@ -26,7 +26,8 @@ var initialState = /* record */[
   /* words : [] */0,
   /* ticks */0,
   initialState_003,
-  initialState_004
+  initialState_004,
+  /* bonus */undefined
 ];
 
 Canvas$StronglyTyped.boot(600.0, 1200.0, 30, initialState, Game$StronglyTyped.nextState);

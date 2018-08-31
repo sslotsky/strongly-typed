@@ -25,7 +25,8 @@ let initialState = {
   ticks: 0,
   base: (baseMargin, width -. baseMargin),
   gameOver: false,
-  crashCollector: Crash.crashSite()
+  crashCollector: Crash.crashSite(),
+  bonus: None
 };
 
 Canvas.boot(height, width, fontSize, initialState, Game.nextState);

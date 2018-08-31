@@ -1,3 +1,10 @@
+type bonus = {
+  x: float,
+  startY: float,
+  offsetY: float,
+  amplitude: int,
+};
+
 type word = {
   text: string,
   velocity: float,
@@ -22,8 +29,8 @@ type state = {
   words: list(word),
   ticks: int,
   base: (float, float),
-  /* Represent what isn't there. "We don't have any no-cream." */
-  crashCollector: crashCollector
+  crashCollector: crashCollector,
+  bonus: option(bonus)
 };
 
 type ui = {
@@ -39,4 +46,5 @@ type ui = {
   onCollect: word => unit
 };
 
+let startsWithStr = (input, str) => str->Js.Re.test(("^" ++ input)->Js.Re.fromString);
 let startsWith = (input, word) => word.text->Js.Re.test(("^" ++ input)->Js.Re.fromString);

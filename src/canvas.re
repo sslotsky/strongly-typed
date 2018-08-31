@@ -19,6 +19,14 @@ type measurement = {
   width: float
 };
 
+[@bs.deriving abstract]
+type image = {
+  mutable onload: unit => unit,
+  mutable src: string,
+  [@bs.as "width"] imageWidth: int,
+  [@bs.as "height"] imageHeight: int,
+};
+
 [@bs.scope "document"][@bs.val] external getCanvas: string => canvas = "getElementById";
 [@bs.scope "window"][@bs.val] external animate: (unit => unit) => unit = "requestAnimationFrame";
 [@bs.scope "window"][@bs.val] external listen: (string, event => unit) => unit = "addEventListener";
@@ -29,8 +37,11 @@ type measurement = {
 [@bs.send] external fillRect: (context, float, float, float, float) => unit = "fillRect";
 [@bs.send] external measureText: (context, string) => measurement = "measureText";
 [@bs.send] external clearRect: (context, int, int, int, int) => unit = "clearRect";
+[@bs.send] external drawImage: (context, image, float, float) => unit = "drawImage";
+[@bs.new] external createImage: unit => image = "Image";
 [@bs.module "./assets/atari_boom.wav"] external boom: string = "default";
 [@bs.module "./assets/SFX_Pickup_01.wav"] external collect: string = "default";
+[@bs.module "./assets/manicon.png"] external manicon: string = "default";
 
 let canvas = getCanvas("canvas");
 let context = canvas->getContext("2d");
@@ -46,10 +57,11 @@ type dimensions = {
   fontSize: int
 };
 
-type audioConfig = {
+type assetConfig = {
   boomSound: Audio.buffer,
   collectSound: Audio.buffer,
-  audioContext: Audio.audioContext
+  audioContext: Audio.audioContext,
+  bonus: image
 };
 
 let drawStatusBar = (ui: ui, newState) => {
@@ -80,8 +92,32 @@ let drawStatusBar = (ui: ui, newState) => {
   context->fillText(ui.score()->string_of_int, ui.width -. width, ui.height +. 30.0);
 };
 
-let paint = (dimensions, audioConfig, initialState, nextState) => {
-  let ({width, height, fontSize}, {audioContext, boomSound, collectSound}) = (dimensions, audioConfig);
+let drawBonus = (bonus: bonus, image, ui) => {
+  context->drawImage(image, bonus.x, bonus.startY +. bonus.offsetY);
+  let imageWidth = image->imageWidthGet;
+  let imageCenter = bonus.x +. (imageWidth->float_of_int /. 2.0);
+
+  context->fontSet("16px Arial");
+  context->fillStyleSet("white");
+  let text = "manifold";
+  let textWidth = calculateWidth(text);
+  let textLeft = imageCenter -. (textWidth /. 2.0);
+  let textBottom = bonus.startY +. bonus.offsetY +. image->imageHeightGet->float_of_int +. 18.0;
+
+  let (matching, rest) = switch(ui.input()->startsWithStr(text), ui.input()->String.length, text->String.length) {
+  | (true, inputLength, wordLength) => (ui.input(), text->String.sub(inputLength, wordLength - inputLength))
+  | _ => ("", text)
+  };
+
+  let continue = textLeft +. context->measureText(matching)->widthGet;
+  context->fillStyleSet("green");
+  context->fillText(matching, textLeft, textBottom);
+  context->fillStyleSet("white");
+  context->fillText(rest, continue, textBottom);
+};
+
+let paint = (dimensions, assetConfig, initialState, nextState) => {
+  let ({width, height, fontSize}, {audioContext, boomSound, collectSound, bonus}) = (dimensions, assetConfig);
   let input = ref("");
   let score = ref(0);
 
@@ -148,6 +184,11 @@ let paint = (dimensions, audioConfig, initialState, nextState) => {
 
     drawStatusBar(ui, newState);
 
+    switch (state.bonus) {
+    | None => ()
+    | Some(b) => b->drawBonus(bonus, ui)
+    };
+
     if (newState.gameOver) {
       let text = "GAME OVER";
       context->fontSet("90px Arial");
@@ -184,14 +225,19 @@ let boot = (height, width, fontSize, initialState, nextState) => {
     let ctx = audioContext();
     let loadBoom = ctx->loadSound(boom);
     let loadCollect = ctx->loadSound(collect);
+    let bonus = createImage();
 
-    loadBoom |> Js.Promise.then_(boomSound => {
-      loadCollect |> Js.Promise.then_(collectSound => {
-        let start = paint({width, height, fontSize}, {audioContext: ctx, boomSound, collectSound});
-        start(initialState, nextState);
-        Js.Promise.resolve();
-      })
-    }) |> ignore;
+    bonus->onloadSet(() => {
+      loadBoom |> Js.Promise.then_(boomSound => {
+        loadCollect |> Js.Promise.then_(collectSound => {
+          let start = paint({width, height, fontSize}, {audioContext: ctx, boomSound, collectSound, bonus});
+          start(initialState, nextState);
+          Js.Promise.resolve();
+        })
+      }) |> ignore;
+    });
+
+    bonus->srcSet(manicon);
   };
 
   canvas->subscribe("click", startGame);

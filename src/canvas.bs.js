@@ -7,6 +7,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as Audio$StronglyTyped from "./audio.bs.js";
 import * as Crash$StronglyTyped from "./crash.bs.js";
+import * as ManiconPng from "./assets/manicon.png";
 import * as Common$StronglyTyped from "./common.bs.js";
 import * as Atari_boomWav from "./assets/atari_boom.wav";
 import * as SFX_Pickup_01Wav from "./assets/SFX_Pickup_01.wav";
@@ -42,10 +43,40 @@ function drawStatusBar(ui, newState) {
   return /* () */0;
 }
 
-function paint(dimensions, audioConfig, initialState, nextState) {
-  var audioContext = audioConfig[/* audioContext */2];
-  var collectSound = audioConfig[/* collectSound */1];
-  var boomSound = audioConfig[/* boomSound */0];
+function drawBonus(bonus, image, ui) {
+  context.drawImage(image, bonus[/* x */0], bonus[/* startY */1] + bonus[/* offsetY */2]);
+  var imageWidth = image.width;
+  var imageCenter = bonus[/* x */0] + imageWidth / 2.0;
+  context.font = "16px Arial";
+  context.fillStyle = "white";
+  var text = "manifold";
+  var textWidth = context.measureText(text).width;
+  var textLeft = imageCenter - textWidth / 2.0;
+  var textBottom = bonus[/* startY */1] + bonus[/* offsetY */2] + image.height + 18.0;
+  var match = Common$StronglyTyped.startsWithStr(Curry._1(ui[/* input */5], /* () */0), text);
+  var match$1 = Curry._1(ui[/* input */5], /* () */0).length;
+  var match$2 = text.length;
+  var match$3 = match ? /* tuple */[
+      Curry._1(ui[/* input */5], /* () */0),
+      $$String.sub(text, match$1, match$2 - match$1 | 0)
+    ] : /* tuple */[
+      "",
+      text
+    ];
+  var matching = match$3[0];
+  var $$continue = textLeft + context.measureText(matching).width;
+  context.fillStyle = "green";
+  context.fillText(matching, textLeft, textBottom);
+  context.fillStyle = "white";
+  context.fillText(match$3[1], $$continue, textBottom);
+  return /* () */0;
+}
+
+function paint(dimensions, assetConfig, initialState, nextState) {
+  var bonus = assetConfig[/* bonus */3];
+  var audioContext = assetConfig[/* audioContext */2];
+  var collectSound = assetConfig[/* collectSound */1];
+  var boomSound = assetConfig[/* boomSound */0];
   var fontSize = dimensions[/* fontSize */2];
   var width = dimensions[/* width */1];
   var height = dimensions[/* height */0];
@@ -127,6 +158,10 @@ function paint(dimensions, audioConfig, initialState, nextState) {
             return /* () */0;
           }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
     drawStatusBar(ui, newState);
+    var match$1 = state[/* bonus */5];
+    if (match$1 !== undefined) {
+      drawBonus(match$1, bonus, ui);
+    }
     if (newState[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px Arial";
@@ -140,7 +175,8 @@ function paint(dimensions, audioConfig, initialState, nextState) {
                     /* words */initialState[/* words */1],
                     /* ticks */initialState[/* ticks */2],
                     /* base */initialState[/* base */3],
-                    /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0)
+                    /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0),
+                    /* bonus */initialState[/* bonus */5]
                   ]);
       };
       canvas.addEventListener("click", restart);
@@ -167,25 +203,31 @@ function boot(height, width, fontSize, initialState, nextState) {
     var ctx = Audio$StronglyTyped.audioContext(/* () */0);
     var loadBoom = Audio$StronglyTyped.loadSound(ctx, Atari_boomWav.default);
     var loadCollect = Audio$StronglyTyped.loadSound(ctx, SFX_Pickup_01Wav.default);
-    loadBoom.then((function (boomSound) {
-            return loadCollect.then((function (collectSound) {
-                          var partial_arg = /* record */[
-                            /* boomSound */boomSound,
-                            /* collectSound */collectSound,
-                            /* audioContext */ctx
-                          ];
-                          var partial_arg$1 = /* record */[
-                            /* height */height,
-                            /* width */width,
-                            /* fontSize */fontSize
-                          ];
-                          var start = function (param, param$1) {
-                            return paint(partial_arg$1, partial_arg, param, param$1);
-                          };
-                          Curry._2(start, initialState, nextState);
-                          return Promise.resolve(/* () */0);
-                        }));
-          }));
+    var bonus = new Image();
+    bonus.onload = (function () {
+        loadBoom.then((function (boomSound) {
+                return loadCollect.then((function (collectSound) {
+                              var partial_arg = /* record */[
+                                /* boomSound */boomSound,
+                                /* collectSound */collectSound,
+                                /* audioContext */ctx,
+                                /* bonus */bonus
+                              ];
+                              var partial_arg$1 = /* record */[
+                                /* height */height,
+                                /* width */width,
+                                /* fontSize */fontSize
+                              ];
+                              var start = function (param, param$1) {
+                                return paint(partial_arg$1, partial_arg, param, param$1);
+                              };
+                              Curry._2(start, initialState, nextState);
+                              return Promise.resolve(/* () */0);
+                            }));
+              }));
+        return /* () */0;
+      });
+    bonus.src = ManiconPng.default;
     return /* () */0;
   };
   canvas.addEventListener("click", startGame);
@@ -203,6 +245,7 @@ export {
   baseHeight ,
   statusBarHeight ,
   drawStatusBar ,
+  drawBonus ,
   paint ,
   boot ,
   

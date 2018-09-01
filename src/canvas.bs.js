@@ -22,24 +22,24 @@ function calculateWidth(str) {
 
 function drawStatusBar(ui, newState) {
   context.fillStyle = "gray";
-  context.fillRect(0.0, ui[/* height */2], ui[/* width */3], 40.0);
+  context.fillRect(0.0, ui[/* height */4], ui[/* width */5], 40.0);
   context.fillStyle = "black";
-  context.fillRect(10.0, ui[/* height */2] + 10.0, 100.0, 40.0 - 20.0);
+  context.fillRect(10.0, ui[/* height */4] + 10.0, 100.0, 40.0 - 20.0);
   var match = newState[/* base */3];
   context.fillStyle = "red";
-  context.fillRect(10.0, ui[/* height */2] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
+  context.fillRect(10.0, ui[/* height */4] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
   context.font = "20px bold arial";
-  var inputWidth = Curry._1(ui[/* calculateWidth */7], Curry._1(ui[/* input */5], /* () */0));
-  var inputLeft = ui[/* width */3] / 2.0 - inputWidth / 2.0;
-  if (Curry._1(ui[/* input */5], /* () */0) !== "") {
+  var inputWidth = Curry._1(ui[/* calculateWidth */9], Curry._1(ui[/* input */7], /* () */0));
+  var inputLeft = ui[/* width */5] / 2.0 - inputWidth / 2.0;
+  if (Curry._1(ui[/* input */7], /* () */0) !== "") {
     context.fillStyle = "black";
-    context.fillRect(inputLeft - 5.0, ui[/* height */2] + 5.0, inputWidth + 10.0, 30.0);
+    context.fillRect(inputLeft - 5.0, ui[/* height */4] + 5.0, inputWidth + 10.0, 30.0);
   }
   context.fillStyle = "lime";
-  context.fillText(Curry._1(ui[/* input */5], /* () */0), inputLeft, ui[/* height */2] + 30.0);
-  var width = Curry._1(ui[/* calculateWidth */7], String(Curry._1(ui[/* score */1], /* () */0)));
+  context.fillText(Curry._1(ui[/* input */7], /* () */0), inputLeft, ui[/* height */4] + 30.0);
+  var width = Curry._1(ui[/* calculateWidth */9], String(Curry._1(ui[/* score */3], /* () */0)));
   context.fillStyle = "red";
-  context.fillText(String(Curry._1(ui[/* score */1], /* () */0)), ui[/* width */3] - width, ui[/* height */2] + 30.0);
+  context.fillText(String(Curry._1(ui[/* score */3], /* () */0)), ui[/* width */5] - width, ui[/* height */4] + 30.0);
   return /* () */0;
 }
 
@@ -73,7 +73,7 @@ function drawBonus(bonus, image, ui) {
   var textWidth = context.measureText(text).width;
   var textLeft = imageCenter - textWidth / 2.0;
   var textBottom = bonus[/* startY */1] + bonus[/* offsetY */2] + image.height + 18.0;
-  return splitText(text, Curry._1(ui[/* input */5], /* () */0), textLeft, textBottom, "white", "lime");
+  return splitText(text, Curry._1(ui[/* input */7], /* () */0), textLeft, textBottom, "white", "lime");
 }
 
 function paint(dimensions, assetConfig, initialState, nextState) {
@@ -86,6 +86,7 @@ function paint(dimensions, assetConfig, initialState, nextState) {
   var height = dimensions[/* height */0];
   var input = /* record */[/* contents */""];
   var score = /* record */[/* contents */0];
+  var paused = /* record */[/* contents */false];
   var clearInput = function () {
     input[0] = "";
     return /* () */0;
@@ -99,63 +100,56 @@ function paint(dimensions, assetConfig, initialState, nextState) {
     score[0] = 0;
     return /* () */0;
   };
-  var ui_001 = function () {
+  var playPause = function () {
+    paused[0] = !paused[0];
+    return /* () */0;
+  };
+  var ui_000 = function () {
+    return paused[0];
+  };
+  var ui_003 = function () {
     return score[0];
   };
-  var ui_005 = function () {
+  var ui_007 = function () {
     return input[0];
   };
-  var ui_008 = function () {
+  var ui_010 = function () {
     return Audio$StronglyTyped.playSound(audioContext, boomSound);
   };
-  var ui_009 = function (word) {
+  var ui_011 = function (word) {
     Audio$StronglyTyped.playSound(audioContext, collectSound);
     score[0] = score[0] + Caml_int32.imul(word[/* text */0].length, 10.0 * word[/* velocity */1] | 0) | 0;
     return /* () */0;
   };
   var ui = /* record */[
+    ui_000,
+    /* playPause */playPause,
     /* reset */reset,
-    ui_001,
+    ui_003,
     /* height */height,
     /* width */width,
     /* fontSize */fontSize,
-    ui_005,
+    ui_007,
     /* clearInput */clearInput,
     /* calculateWidth */calculateWidth,
-    ui_008,
-    ui_009
+    ui_010,
+    ui_011
   ];
+  var playPauseClick = function () {
+    return playPause(/* () */0);
+  };
+  canvas.addEventListener("click", playPauseClick);
   var tick = function (state) {
-    context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
-    context.fillStyle = "black";
-    context.fillRect(0.0, 0.0, width, height);
-    context.font = String(fontSize) + "px arial";
-    var newState = Curry._2(nextState, state, ui);
-    List.iter((function (word) {
-            return splitText(word[/* text */0], Curry._1(ui_005, /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
-          }), newState[/* words */1]);
-    var match = state[/* base */3];
-    var baseLeft = match[0];
-    context.fillStyle = "orange";
-    context.fillRect(baseLeft, height - 5.0, match[1] - baseLeft, 5.0);
-    context.fillStyle = "black";
-    List.iter((function (site) {
-            context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
-            return /* () */0;
-          }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
-    drawStatusBar(ui, newState);
-    var match$1 = state[/* bonus */5];
-    if (match$1 !== undefined) {
-      drawBonus(match$1, bonus, ui);
-    }
-    if (newState[/* gameOver */0]) {
+    if (state[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
+      canvas.removeEventListener("click", playPauseClick);
       var restart = function () {
         reset(/* () */0);
         canvas.removeEventListener("click", restart);
+        canvas.addEventListener("click", playPauseClick);
         return tick(/* record */[
                     /* gameOver */initialState[/* gameOver */0],
                     /* words */initialState[/* words */1],
@@ -167,7 +161,34 @@ function paint(dimensions, assetConfig, initialState, nextState) {
       };
       canvas.addEventListener("click", restart);
       return /* () */0;
+    } else if (Curry._1(ui_000, /* () */0)) {
+      window.requestAnimationFrame((function () {
+              return tick(state);
+            }));
+      return /* () */0;
     } else {
+      context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
+      context.fillStyle = "black";
+      context.fillRect(0.0, 0.0, width, height);
+      context.font = String(fontSize) + "px arial";
+      var newState = Curry._2(nextState, state, ui);
+      List.iter((function (word) {
+              return splitText(word[/* text */0], Curry._1(ui_007, /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
+            }), newState[/* words */1]);
+      var match = state[/* base */3];
+      var baseLeft = match[0];
+      context.fillStyle = "orange";
+      context.fillRect(baseLeft, height - 5.0, match[1] - baseLeft, 5.0);
+      context.fillStyle = "black";
+      List.iter((function (site) {
+              context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
+              return /* () */0;
+            }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
+      drawStatusBar(ui, newState);
+      var match$1 = state[/* bonus */5];
+      if (match$1 !== undefined) {
+        drawBonus(match$1, bonus, ui);
+      }
       window.requestAnimationFrame((function () {
               return tick(newState);
             }));

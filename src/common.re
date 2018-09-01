@@ -34,6 +34,8 @@ type state = {
 };
 
 type ui = {
+  paused: unit => bool,
+  playPause: unit => unit,
   reset: unit => unit,
   score: unit => int,
   height: float,

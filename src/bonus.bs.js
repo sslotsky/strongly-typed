@@ -4,7 +4,7 @@
 var tau = 2.0 * Math.PI;
 
 function tick(bonus, ui) {
-  var match = bonus[/* x */0] === ui[/* width */3];
+  var match = bonus[/* x */0] === ui[/* width */5];
   return /* record */[
           /* x */match ? 0.0 : bonus[/* x */0] + 1.0,
           /* startY */bonus[/* startY */1],

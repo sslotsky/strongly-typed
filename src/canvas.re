@@ -124,6 +124,7 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
   let ({width, height, fontSize}, {audioContext, boomSound, collectSound, bonus}) = (dimensions, assetConfig);
   let input = ref("");
   let score = ref(0);
+  let paused = ref(false);
 
   let clearInput = () => {
     input := "";
@@ -138,11 +139,17 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
     score := 0;
   };
 
+  let playPause = () => {
+    paused := !paused^;
+  };
+
   let ui = {
     reset,
     height,
     width,
     fontSize,
+    paused: () => paused^,
+    playPause,
     input: () => input^,
     clearInput,
     calculateWidth,
@@ -154,48 +161,55 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
     }
   };
 
+  let playPauseClick = _ => ui.playPause();
+  canvas->subscribe("click", playPauseClick);
+
   let rec tick = state => {
-    context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
-    context->fillStyleSet("black");
-    context->fillRect(0.0, 0.0, ui.width, ui.height);
-    context->fontSet(ui.fontSize->string_of_int ++ "px arial");
-
-    let newState = state->nextState(ui);
-
-    List.iter(word => {
-      splitText(word.text, ui.input(), word.x, word.y, "blue", "red");
-    }, newState.words);
-
-    let (baseLeft, baseRight) = state.base;
-    context->fillStyleSet("orange");
-    context->fillRect(baseLeft, ui.height -. baseHeight, baseRight -. baseLeft, baseHeight);
-
-    context->fillStyleSet("black");
-    List.iter(site => {
-      context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
-    }, state.crashCollector.sites());
-
-    drawStatusBar(ui, newState);
-
-    switch (state.bonus) {
-    | None => ()
-    | Some(b) => b->drawBonus(bonus, ui)
-    };
-
-    if (newState.gameOver) {
+    if (state.gameOver) {
       let text = "GAME OVER";
       context->fontSet("90px arial");
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (ui.calculateWidth(text) /. 2.0), ui.height /. 2.0);
+      canvas->unsubscribe("click", playPauseClick);
 
       let rec restart = _ => {
         ui.reset();
         canvas->unsubscribe("click", restart);
+        canvas->subscribe("click", playPauseClick);
         { ...initialState, crashCollector: Crash.crashSite() }->tick;
       };
 
       canvas->subscribe("click", restart);
+    } else if (ui.paused()) {
+      animate(() => state->tick);
     } else {
+      context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
+      context->fillStyleSet("black");
+      context->fillRect(0.0, 0.0, ui.width, ui.height);
+      context->fontSet(ui.fontSize->string_of_int ++ "px arial");
+
+      let newState = state->nextState(ui);
+
+      List.iter(word => {
+        splitText(word.text, ui.input(), word.x, word.y, "blue", "red");
+      }, newState.words);
+
+      let (baseLeft, baseRight) = state.base;
+      context->fillStyleSet("orange");
+      context->fillRect(baseLeft, ui.height -. baseHeight, baseRight -. baseLeft, baseHeight);
+
+      context->fillStyleSet("black");
+      List.iter(site => {
+        context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
+      }, state.crashCollector.sites());
+
+      drawStatusBar(ui, newState);
+
+      switch (state.bonus) {
+      | None => ()
+      | Some(b) => b->drawBonus(bonus, ui)
+      };
+
       animate(() => newState->tick);
     };
   };

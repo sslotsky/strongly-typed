@@ -39,7 +39,7 @@ function drawStatusBar(ui, newState) {
   context.fillText(Curry._1(ui[/* input */7], /* () */0), inputLeft, ui[/* height */4] + 30.0);
   var width = Curry._1(ui[/* calculateWidth */9], String(Curry._1(ui[/* score */3], /* () */0)));
   context.fillStyle = "red";
-  context.fillText(String(Curry._1(ui[/* score */3], /* () */0)), ui[/* width */5] - width, ui[/* height */4] + 30.0);
+  context.fillText(String(Curry._1(ui[/* score */3], /* () */0)), ui[/* width */5] - width - 10.0, ui[/* height */4] + 30.0);
   return /* () */0;
 }
 
@@ -142,7 +142,7 @@ function paint(dimensions, assetConfig, initialState, nextState) {
   var tick = function (state) {
     if (state[/* gameOver */0]) {
       var text = "GAME OVER";
-      context.font = "90px arial";
+      context.font = "90px bold arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
       canvas.removeEventListener("click", playPauseClick);
@@ -202,7 +202,7 @@ function boot(height, width, fontSize, initialState, nextState) {
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height + 40.0);
   var text = "START GAME";
-  context.font = "90px arial";
+  context.font = "90px bold arial";
   context.fillStyle = "purple";
   context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
   var startGame = function () {

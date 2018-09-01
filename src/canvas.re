@@ -89,7 +89,7 @@ let drawStatusBar = (ui: ui, newState) => {
 
   let width = ui.calculateWidth(ui.score()->string_of_int);
   context->fillStyleSet("red");
-  context->fillText(ui.score()->string_of_int, ui.width -. width, ui.height +. 30.0);
+  context->fillText(ui.score()->string_of_int, ui.width -. width -. 10.0, ui.height +. 30.0);
 };
 
 let splitText = (text, input, left, bottom, color, matchColor) => {
@@ -167,7 +167,7 @@ let paint = (dimensions, assetConfig, initialState, nextState) => {
   let rec tick = state => {
     if (state.gameOver) {
       let text = "GAME OVER";
-      context->fontSet("90px arial");
+      context->fontSet("90px bold arial");
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (ui.calculateWidth(text) /. 2.0), ui.height /. 2.0);
       canvas->unsubscribe("click", playPauseClick);
@@ -222,7 +222,7 @@ let boot = (height, width, fontSize, initialState, nextState) => {
   context->fillRect(0.0, 0.0, width, height +. statusBarHeight);
 
   let text = "START GAME";
-  context->fontSet("90px arial");
+  context->fontSet("90px bold arial");
   context->fillStyleSet("purple");
   context->fillText(text, (width /. 2.0) -. (calculateWidth(text) /. 2.0), height /. 2.0);
 

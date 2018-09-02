@@ -33,20 +33,17 @@ var initialState = /* record */[
   /* bonus */undefined
 ];
 
-Canvas$StronglyTyped.boot(600.0, 1200.0, 30, initialState, Game$StronglyTyped.nextState);
+Canvas$StronglyTyped.boot("canvas", 600.0, 1200.0, initialState, Game$StronglyTyped.nextState);
 
 var height = 600.0;
 
 var width = 1200.0;
-
-var fontSize = 30;
 
 var baseMargin = 30.0;
 
 export {
   height ,
   width ,
-  fontSize ,
   baseMargin ,
   initialState ,
   

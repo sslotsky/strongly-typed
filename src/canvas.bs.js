@@ -12,38 +12,36 @@ import * as Common$StronglyTyped from "./common.bs.js";
 import * as Atari_boomWav from "./assets/atari_boom.wav";
 import * as SFX_Pickup_01Wav from "./assets/SFX_Pickup_01.wav";
 
-var canvas = document.getElementById("canvas");
-
-var context = canvas.getContext("2d");
-
-function calculateWidth(str) {
+function calculateWidth(context, str) {
   return context.measureText(str).width;
 }
 
-function drawStatusBar(ui, newState) {
+function drawStatusBar(context, ui, state, score) {
   context.fillStyle = "gray";
-  context.fillRect(0.0, ui[/* height */4], ui[/* width */5], 40.0);
+  context.fillRect(0.0, ui[/* height */0], ui[/* width */1], 40.0);
   context.fillStyle = "black";
-  context.fillRect(10.0, ui[/* height */4] + 10.0, 100.0, 40.0 - 20.0);
-  var match = newState[/* base */3];
+  context.fillRect(10.0, ui[/* height */0] + 10.0, 100.0, 40.0 - 20.0);
+  var match = state[/* base */3];
   context.fillStyle = "red";
-  context.fillRect(10.0, ui[/* height */4] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(newState[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
+  context.fillRect(10.0, ui[/* height */0] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(state[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
   context.font = "20px bold arial";
-  var inputWidth = Curry._1(ui[/* calculateWidth */9], Curry._1(ui[/* input */7], /* () */0));
-  var inputLeft = ui[/* width */5] / 2.0 - inputWidth / 2.0;
-  if (Curry._1(ui[/* input */7], /* () */0) !== "") {
+  var str = Curry._1(ui[/* input */2], /* () */0);
+  var inputWidth = context.measureText(str).width;
+  var inputLeft = ui[/* width */1] / 2.0 - inputWidth / 2.0;
+  if (Curry._1(ui[/* input */2], /* () */0) !== "") {
     context.fillStyle = "black";
-    context.fillRect(inputLeft - 5.0, ui[/* height */4] + 5.0, inputWidth + 10.0, 30.0);
+    context.fillRect(inputLeft - 5.0, ui[/* height */0] + 5.0, inputWidth + 10.0, 30.0);
   }
   context.fillStyle = "lime";
-  context.fillText(Curry._1(ui[/* input */7], /* () */0), inputLeft, ui[/* height */4] + 30.0);
-  var width = Curry._1(ui[/* calculateWidth */9], String(Curry._1(ui[/* score */3], /* () */0)));
+  context.fillText(Curry._1(ui[/* input */2], /* () */0), inputLeft, ui[/* height */0] + 30.0);
+  var str$1 = String(score);
+  var width = context.measureText(str$1).width;
   context.fillStyle = "red";
-  context.fillText(String(Curry._1(ui[/* score */3], /* () */0)), ui[/* width */5] - width - 10.0, ui[/* height */4] + 30.0);
+  context.fillText(String(score), ui[/* width */1] - width - 10.0, ui[/* height */0] + 30.0);
   return /* () */0;
 }
 
-function splitText(text, input, left, bottom, color, matchColor) {
+function splitText(context, text, input, left, bottom, color, matchColor) {
   var match = Common$StronglyTyped.startsWith(text, input);
   var match$1 = input.length;
   var match$2 = text.length;
@@ -63,25 +61,44 @@ function splitText(text, input, left, bottom, color, matchColor) {
   return /* () */0;
 }
 
-function drawBonus(bonus, image, ui) {
+function drawBonus(context, bonus, image, ui) {
   context.drawImage(image, bonus[/* x */0], bonus[/* startY */1] + bonus[/* offsetY */2]);
+  context.font = "16px arial";
   var imageWidth = image.width;
   var imageCenter = bonus[/* x */0] + imageWidth / 2.0;
-  context.font = "16px arial";
-  context.fillStyle = "white";
   var text = "manifold";
   var textWidth = context.measureText(text).width;
   var textLeft = imageCenter - textWidth / 2.0;
   var textBottom = bonus[/* startY */1] + bonus[/* offsetY */2] + image.height + 18.0;
-  return splitText(text, Curry._1(ui[/* input */7], /* () */0), textLeft, textBottom, "white", "lime");
+  return splitText(context, text, Curry._1(ui[/* input */2], /* () */0), textLeft, textBottom, "white", "lime");
 }
 
-function paint(dimensions, assetConfig, initialState, nextState) {
+function renderWords(context, state, ui) {
+  context.clearRect(0, 0, ui[/* width */1] | 0, (ui[/* height */0] | 0) + 40 | 0);
+  context.fillStyle = "black";
+  context.fillRect(0.0, 0.0, ui[/* width */1], ui[/* height */0]);
+  context.font = String(30) + "px arial";
+  List.iter((function (word) {
+          return splitText(context, word[/* text */0], Curry._1(ui[/* input */2], /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
+        }), state[/* words */1]);
+  var match = state[/* base */3];
+  var baseLeft = match[0];
+  context.fillStyle = "orange";
+  context.fillRect(baseLeft, ui[/* height */0] - 5.0, match[1] - baseLeft, 5.0);
+  context.fillStyle = "black";
+  return List.iter((function (site) {
+                context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
+                return /* () */0;
+              }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
+}
+
+function paint(param, dimensions, assetConfig, initialState, nextState) {
+  var context = param[1];
+  var canvas = param[0];
   var bonus = assetConfig[/* bonus */3];
   var audioContext = assetConfig[/* audioContext */2];
   var collectSound = assetConfig[/* collectSound */1];
   var boomSound = assetConfig[/* boomSound */0];
-  var fontSize = dimensions[/* fontSize */2];
   var width = dimensions[/* width */1];
   var height = dimensions[/* height */0];
   var input = /* record */[/* contents */""];
@@ -104,52 +121,42 @@ function paint(dimensions, assetConfig, initialState, nextState) {
     paused[0] = !paused[0];
     return /* () */0;
   };
-  var ui_000 = function () {
-    return paused[0];
-  };
-  var ui_003 = function () {
-    return score[0];
-  };
-  var ui_007 = function () {
+  var ui_002 = function () {
     return input[0];
   };
-  var ui_010 = function () {
+  var ui_004 = function (str) {
+    context.font = String(30) + "px bold arial";
+    return context.measureText(str).width;
+  };
+  var ui_005 = function () {
     return Audio$StronglyTyped.playSound(audioContext, boomSound);
   };
-  var ui_011 = function (word) {
+  var ui_006 = function (word) {
     Audio$StronglyTyped.playSound(audioContext, collectSound);
     score[0] = score[0] + Caml_int32.imul(word[/* text */0].length, 10.0 * word[/* velocity */1] | 0) | 0;
     return /* () */0;
   };
   var ui = /* record */[
-    ui_000,
-    /* playPause */playPause,
-    /* reset */reset,
-    ui_003,
     /* height */height,
     /* width */width,
-    /* fontSize */fontSize,
-    ui_007,
+    ui_002,
     /* clearInput */clearInput,
-    /* calculateWidth */calculateWidth,
-    ui_010,
-    ui_011
+    ui_004,
+    ui_005,
+    ui_006
   ];
-  var playPauseClick = function () {
-    return playPause(/* () */0);
-  };
-  canvas.addEventListener("click", playPauseClick);
+  canvas.addEventListener("click", playPause);
   var tick = function (state) {
     if (state[/* gameOver */0]) {
       var text = "GAME OVER";
       context.font = "90px bold arial";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
-      canvas.removeEventListener("click", playPauseClick);
+      canvas.removeEventListener("click", playPause);
       var restart = function () {
         reset(/* () */0);
         canvas.removeEventListener("click", restart);
-        canvas.addEventListener("click", playPauseClick);
+        canvas.addEventListener("click", playPause);
         return tick(/* record */[
                     /* gameOver */initialState[/* gameOver */0],
                     /* words */initialState[/* words */1],
@@ -161,33 +168,18 @@ function paint(dimensions, assetConfig, initialState, nextState) {
       };
       canvas.addEventListener("click", restart);
       return /* () */0;
-    } else if (Curry._1(ui_000, /* () */0)) {
+    } else if (paused[0]) {
       window.requestAnimationFrame((function () {
               return tick(state);
             }));
       return /* () */0;
     } else {
-      context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
-      context.fillStyle = "black";
-      context.fillRect(0.0, 0.0, width, height);
-      context.font = String(fontSize) + "px arial";
       var newState = Curry._2(nextState, state, ui);
-      List.iter((function (word) {
-              return splitText(word[/* text */0], Curry._1(ui_007, /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
-            }), newState[/* words */1]);
-      var match = state[/* base */3];
-      var baseLeft = match[0];
-      context.fillStyle = "orange";
-      context.fillRect(baseLeft, height - 5.0, match[1] - baseLeft, 5.0);
-      context.fillStyle = "black";
-      List.iter((function (site) {
-              context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
-              return /* () */0;
-            }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
-      drawStatusBar(ui, newState);
-      var match$1 = state[/* bonus */5];
-      if (match$1 !== undefined) {
-        drawBonus(match$1, bonus, ui);
+      renderWords(context, newState, ui);
+      drawStatusBar(context, ui, newState, score[0]);
+      var match = newState[/* bonus */5];
+      if (match !== undefined) {
+        drawBonus(context, match, bonus, ui);
       }
       window.requestAnimationFrame((function () {
               return tick(newState);
@@ -198,7 +190,9 @@ function paint(dimensions, assetConfig, initialState, nextState) {
   return tick(initialState);
 }
 
-function boot(height, width, fontSize, initialState, nextState) {
+function boot(id, height, width, initialState, nextState) {
+  var canvas = document.getElementById(id);
+  var context = canvas.getContext("2d");
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height + 40.0);
   var text = "START GAME";
@@ -222,11 +216,14 @@ function boot(height, width, fontSize, initialState, nextState) {
                               ];
                               var partial_arg$1 = /* record */[
                                 /* height */height,
-                                /* width */width,
-                                /* fontSize */fontSize
+                                /* width */width
+                              ];
+                              var partial_arg$2 = /* tuple */[
+                                canvas,
+                                context
                               ];
                               var start = function (param, param$1) {
-                                return paint(partial_arg$1, partial_arg, param, param$1);
+                                return paint(partial_arg$2, partial_arg$1, partial_arg, param, param$1);
                               };
                               Curry._2(start, initialState, nextState);
                               return Promise.resolve(/* () */0);
@@ -241,21 +238,23 @@ function boot(height, width, fontSize, initialState, nextState) {
   return /* () */0;
 }
 
+var fontSize = 30;
+
 var baseHeight = 5.0;
 
 var statusBarHeight = 40.0;
 
 export {
-  canvas ,
-  context ,
+  fontSize ,
   calculateWidth ,
   baseHeight ,
   statusBarHeight ,
   drawStatusBar ,
   splitText ,
   drawBonus ,
+  renderWords ,
   paint ,
   boot ,
   
 }
-/* canvas Not a pure module */
+/* ./assets/manicon.png Not a pure module */

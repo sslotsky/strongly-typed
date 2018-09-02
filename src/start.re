@@ -1,5 +1,3 @@
-open Common;
-
 type hot;
 
 [@bs.deriving abstract]
@@ -18,15 +16,4 @@ switch (parcelModule->hotGet) {
 
 Random.self_init();
 
-let (height, width, baseMargin) = (600.0, 1200.0, 30.0);
-
-let initialState = {
-  words: [],
-  ticks: 0,
-  base: (baseMargin, width -. baseMargin),
-  gameOver: false,
-  crashCollector: Crash.crashSite(),
-  bonus: None
-};
-
-Canvas.boot("canvas", height, width, initialState, Game.nextState);
+ReactDOMRe.renderToElementWithId(<Play />, "app");

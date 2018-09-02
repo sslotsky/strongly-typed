@@ -21,5 +21,9 @@
     "parcel-bundler": "^1.9.7"
   },
   "main": "index.js",
-  "dependencies": {}
+  "dependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "reason-react": "^0.5.3"
+  }
 }

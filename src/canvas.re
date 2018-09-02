@@ -1,7 +1,7 @@
 open Common;
 open Audio;
 
-type canvas;
+type canvas = Dom.element;
 
 [@bs.deriving abstract]
 type event = {
@@ -213,8 +213,7 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
   initialState->tick;
 };
 
-let boot = (id, height, width, initialState, nextState) => {
-  let canvas = getCanvas(id);
+let boot = (canvas, height, width, initialState, nextState) => {
   let context = canvas->getContext("2d");
 
   context->fillStyleSet("black");

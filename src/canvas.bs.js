@@ -190,8 +190,7 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
   return tick(initialState);
 }
 
-function boot(id, height, width, initialState, nextState) {
-  var canvas = document.getElementById(id);
+function boot(canvas, height, width, initialState, nextState) {
   var context = canvas.getContext("2d");
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height + 40.0);

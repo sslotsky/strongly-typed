@@ -6,7 +6,12 @@ let example1 = {
   words: [{
     x: 300.0,
     y: 150.0,
-    text: "Ursa",
+    text: "Scalawags",
+    velocity: 0.0
+  }, {
+    x: 80.0,
+    y: 70.0,
+    text: "Marsupial Madness",
     velocity: 0.0
   }],
   ticks: 0,
@@ -16,7 +21,13 @@ let example1 = {
   bonus: None
 };
 
+example1.crashCollector.crash({ left: 260.0, right: 315.0});
+let examples = [|(example1, "Scal")|];
+
 let make = _ => {
   ...component,
-  render: _ => <Example exampleState={example1} input="Ur" />
+  render: _ =>
+    examples
+      |> Array.mapi((i, (state, input)) => <Example key={i->string_of_int} exampleState={state} input={input} />)
+      |> ReasonReact.array
 };

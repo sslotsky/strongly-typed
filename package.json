@@ -8,7 +8,7 @@
     "deploy": "yarn build && yarn clean-dist && yarn build-dist && yarn dist",
     "clean-dist": "rm -r dist/*",
     "build-dist": "yarn parcel build index.html",
-    "dist": "cd dist; surge --domain lavish-balloon.surge.sh"
+    "dist": "cd dist; cp index.html 200.html; surge --domain lavish-balloon.surge.sh"
   },
   "keywords": [
     "BuckleScript"

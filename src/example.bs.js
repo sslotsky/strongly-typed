@@ -6,15 +6,11 @@ import * as React from "react";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as Game$StronglyTyped from "./game.bs.js";
-import * as Crash$StronglyTyped from "./crash.bs.js";
 import * as Canvas$StronglyTyped from "./canvas.bs.js";
 
-var component = ReasonReact.reducerComponent("Play");
+var component = ReasonReact.reducerComponent("Example");
 
-var canvasHeight = 600.0 + 40.0;
-
-function make() {
+function make(exampleState, input, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -30,8 +26,8 @@ function make() {
                           ref: (function (node) {
                               return Curry._1(self[/* send */3], /* Ready */[(node == null) ? undefined : Js_primitive.some(node)]);
                             }),
-                          height: Pervasives.string_of_float(canvasHeight),
-                          width: Pervasives.string_of_float(1200.0)
+                          height: Pervasives.string_of_float(300.0),
+                          width: Pervasives.string_of_float(600.0)
                         });
             }),
           /* initialState */(function () {
@@ -46,20 +42,8 @@ function make() {
                 return /* UpdateWithSideEffects */Block.__(2, [
                           /* record */[/* initialized */true],
                           (function () {
-                              var initialState_003 = /* base : tuple */[
-                                30.0,
-                                1200.0 - 30.0
-                              ];
-                              var initialState_004 = /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0);
-                              var initialState = /* record */[
-                                /* gameOver */false,
-                                /* words : [] */0,
-                                /* ticks */0,
-                                initialState_003,
-                                initialState_004,
-                                /* bonus */undefined
-                              ];
-                              return Canvas$StronglyTyped.boot(node, 600.0, 1200.0, initialState, Game$StronglyTyped.nextState);
+                              var context = node.getContext("2d");
+                              return Canvas$StronglyTyped.renderWords(context, exampleState, 600.0, 300.0, input);
                             })
                         ]);
               } else {
@@ -70,21 +54,14 @@ function make() {
         ];
 }
 
-var height = 600.0;
+var height = 300.0;
 
-var width = 1200.0;
-
-var baseMargin = 30.0;
-
-var statusBarHeight = 40.0;
+var width = 600.0;
 
 export {
   component ,
   height ,
   width ,
-  baseMargin ,
-  statusBarHeight ,
-  canvasHeight ,
   make ,
   
 }

@@ -4,7 +4,7 @@ import * as Random from "bs-platform/lib/es6/random.js";
 import * as ReactDOMRe from "reason-react/src/ReactDOMRe.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as Play$StronglyTyped from "./play.bs.js";
+import * as App$StronglyTyped from "./app.bs.js";
 
 var match = module.hot;
 
@@ -17,7 +17,7 @@ if (match !== undefined) {
 
 Random.self_init(/* () */0);
 
-ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, Play$StronglyTyped.make(/* array */[])), "app");
+ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, App$StronglyTyped.make(/* array */[])), "app");
 
 export {
   

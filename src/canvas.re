@@ -29,9 +29,10 @@ type image = {
 
 [@bs.scope "document"][@bs.val] external getCanvas: string => canvas = "getElementById";
 [@bs.scope "window"][@bs.val] external animate: (unit => unit) => unit = "requestAnimationFrame";
-[@bs.scope "window"][@bs.val] external listen: (string, event => unit) => unit = "addEventListener";
-[@bs.send] external subscribe: (canvas, string, event => unit) => unit = "addEventListener";
-[@bs.send] external unsubscribe: (canvas, string, event => unit) => unit = "removeEventListener";
+[@bs.scope "window"][@bs.val] external addWindowEvent: (string, event => unit) => unit = "addEventListener";
+[@bs.scope "window"][@bs.val] external removeWindowEvent: (string, event => unit) => unit = "removeEventListener";
+[@bs.send] external subscribe: (Dom.element, string, event => unit) => unit = "addEventListener";
+[@bs.send] external unsubscribe: (Dom.element, string, event => unit) => unit = "removeEventListener";
 [@bs.send] external getContext: (canvas, string) => context = "getContext";
 [@bs.send] external fillText: (context, string, float, float) => unit = "fillText";
 [@bs.send] external fillRect: (context, float, float, float, float) => unit = "fillRect";
@@ -116,24 +117,24 @@ let drawBonus = (context, bonus: bonus, image, ui) => {
   context->splitText(text, ui.input(), textLeft, textBottom, "white", "lime");
 };
 
-let renderWords = (context, state, ui: ui) => {
-  context->clearRect(0, 0, ui.width->int_of_float, ui.height->int_of_float + statusBarHeight->int_of_float);
+let renderWords = (context, state, width, height, input) => {
+  context->clearRect(0, 0, width->int_of_float, height->int_of_float + statusBarHeight->int_of_float);
   context->fillStyleSet("black");
-  context->fillRect(0.0, 0.0, ui.width, ui.height);
+  context->fillRect(0.0, 0.0, width, height);
 
   context->fontSet(fontSize->string_of_int ++ "px arial");
 
   state.words |> List.iter(word => {
-    context->splitText(word.text, ui.input(), word.x, word.y, "blue", "red");
+    context->splitText(word.text, input, word.x, word.y, "blue", "red");
   });
 
   let (baseLeft, baseRight) = state.base;
   context->fillStyleSet("orange");
-  context->fillRect(baseLeft, ui.height -. baseHeight, baseRight -. baseLeft, baseHeight);
+  context->fillRect(baseLeft, height -. baseHeight, baseRight -. baseLeft, baseHeight);
 
   context->fillStyleSet("black");
   state.crashCollector.sites() |> List.iter(site => {
-    context->fillRect(site.left, ui.height -. baseHeight, site.right -. site.left, baseHeight);
+    context->fillRect(site.left, height -. baseHeight, site.right -. site.left, baseHeight);
   });
 };
 
@@ -147,10 +148,6 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
     input := "";
   };
 
-  listen("keypress", (e) => {
-    input := (input^) ++ e->keyGet;
-  });
-
   let reset = () => {
     input := "";
     score := 0;
@@ -158,6 +155,10 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
 
   let playPause = _ => {
     paused := !paused^;
+  };
+
+  let keypress = e => {
+    input := (input^) ++ e->keyGet;
   };
 
   let ui = {
@@ -177,6 +178,8 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
   };
 
   canvas->subscribe("click", playPause);
+  addWindowEvent("keypress", keypress);
+
 
   let rec tick = state => {
     if (state.gameOver) {
@@ -185,11 +188,13 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (context->calculateWidth(text) /. 2.0), ui.height /. 2.0);
       canvas->unsubscribe("click", playPause);
+      removeWindowEvent("keypress", keypress);
 
       let rec restart = _ => {
         reset();
         canvas->unsubscribe("click", restart);
         canvas->subscribe("click", playPause);
+        addWindowEvent("keypress", keypress);
         { ...initialState, crashCollector: Crash.crashSite() }->tick;
       };
 
@@ -198,7 +203,7 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
       animate(() => state->tick);
     } else {
       let newState = state->nextState(ui);
-      context->renderWords(newState, ui);
+      context->renderWords(newState, ui.width, ui.height, ui.input());
       context->drawStatusBar(ui, newState, score^);
 
       switch (newState.bonus) {

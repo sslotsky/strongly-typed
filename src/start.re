@@ -16,4 +16,4 @@ switch (parcelModule->hotGet) {
 
 Random.self_init();
 
-ReactDOMRe.renderToElementWithId(<Play />, "app");
+ReactDOMRe.renderToElementWithId(<App />, "app");

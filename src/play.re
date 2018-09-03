@@ -9,8 +9,8 @@ type action =
 
 let component = ReasonReact.reducerComponent("Play");
 
-let (height, width, baseMargin) = (600.0, 1200.0, 30.0);
-let canvasHeight = height +. baseMargin +. 10.0;
+let (height, width, baseMargin, statusBarHeight) = (600.0, 1200.0, 30.0, 40.0);
+let canvasHeight = height +. statusBarHeight;
 
 let make = (_children) => {
   ...component,

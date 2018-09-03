@@ -73,21 +73,21 @@ function drawBonus(context, bonus, image, ui) {
   return splitText(context, text, Curry._1(ui[/* input */2], /* () */0), textLeft, textBottom, "white", "lime");
 }
 
-function renderWords(context, state, ui) {
-  context.clearRect(0, 0, ui[/* width */1] | 0, (ui[/* height */0] | 0) + 40 | 0);
+function renderWords(context, state, width, height, input) {
+  context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
   context.fillStyle = "black";
-  context.fillRect(0.0, 0.0, ui[/* width */1], ui[/* height */0]);
+  context.fillRect(0.0, 0.0, width, height);
   context.font = String(30) + "px arial";
   List.iter((function (word) {
-          return splitText(context, word[/* text */0], Curry._1(ui[/* input */2], /* () */0), word[/* x */2], word[/* y */3], "blue", "red");
+          return splitText(context, word[/* text */0], input, word[/* x */2], word[/* y */3], "blue", "red");
         }), state[/* words */1]);
   var match = state[/* base */3];
   var baseLeft = match[0];
   context.fillStyle = "orange";
-  context.fillRect(baseLeft, ui[/* height */0] - 5.0, match[1] - baseLeft, 5.0);
+  context.fillRect(baseLeft, height - 5.0, match[1] - baseLeft, 5.0);
   context.fillStyle = "black";
   return List.iter((function (site) {
-                context.fillRect(site[/* left */0], ui[/* height */0] - 5.0, site[/* right */1] - site[/* left */0], 5.0);
+                context.fillRect(site[/* left */0], height - 5.0, site[/* right */1] - site[/* left */0], 5.0);
                 return /* () */0;
               }), Curry._1(state[/* crashCollector */4][/* sites */3], /* () */0));
 }
@@ -108,10 +108,6 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
     input[0] = "";
     return /* () */0;
   };
-  window.addEventListener("keypress", (function (e) {
-          input[0] = input[0] + e.key;
-          return /* () */0;
-        }));
   var reset = function () {
     input[0] = "";
     score[0] = 0;
@@ -119,6 +115,10 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
   };
   var playPause = function () {
     paused[0] = !paused[0];
+    return /* () */0;
+  };
+  var keypress = function (e) {
+    input[0] = input[0] + e.key;
     return /* () */0;
   };
   var ui_002 = function () {
@@ -146,6 +146,7 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
     ui_006
   ];
   canvas.addEventListener("click", playPause);
+  window.addEventListener("keypress", keypress);
   var tick = function (state) {
     if (state[/* gameOver */0]) {
       var text = "GAME OVER";
@@ -153,10 +154,12 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
       canvas.removeEventListener("click", playPause);
+      window.removeEventListener("keypress", keypress);
       var restart = function () {
         reset(/* () */0);
         canvas.removeEventListener("click", restart);
         canvas.addEventListener("click", playPause);
+        window.addEventListener("keypress", keypress);
         return tick(/* record */[
                     /* gameOver */initialState[/* gameOver */0],
                     /* words */initialState[/* words */1],
@@ -175,7 +178,7 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
       return /* () */0;
     } else {
       var newState = Curry._2(nextState, state, ui);
-      renderWords(context, newState, ui);
+      renderWords(context, newState, width, height, Curry._1(ui_002, /* () */0));
       drawStatusBar(context, ui, newState, score[0]);
       var match = newState[/* bonus */5];
       if (match !== undefined) {

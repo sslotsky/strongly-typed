@@ -1,19 +1,4 @@
-  /*
-let renderRoute = page => switch(page) {
-| NotFound => <h1>(ReasonReact.string("not found"))</h1> 
-| Play => <Play />
-| Examples => <h1>(ReasonReact.string("Examples"))</h1>
-};
-
-let getPage = (url: ReasonReact.Router.url) => {
-  switch (url.path) {
-  | [] => Play
-  | ["examples"] => Examples
-  | _ => NotFound
-  }
-};
-*/
-
+[%%raw "require('./assets/app.css')"];
 
 type route =
   | NotFound

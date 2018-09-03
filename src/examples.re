@@ -27,7 +27,12 @@ let examples = [|(example1, "Scal")|];
 let make = _ => {
   ...component,
   render: _ =>
-    examples
-      |> Array.mapi((i, (state, input)) => <Example key={i->string_of_int} exampleState={state} input={input} />)
-      |> ReasonReact.array
+    <div>
+      <h1> (ReasonReact.string("Examples")) </h1>
+      (
+        examples
+          |> Array.mapi((i, (state, input)) => <Example key={i->string_of_int} exampleState={state} input={input} />)
+          |> ReasonReact.array
+      )
+    </div>
 };

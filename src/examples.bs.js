@@ -2,6 +2,7 @@
 
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as React from "react";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Crash$StronglyTyped from "./crash.bs.js";
 import * as Example$StronglyTyped from "./example.bs.js";
@@ -64,9 +65,9 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return $$Array.mapi((function (i, param) {
-                            return ReasonReact.element(String(i), undefined, Example$StronglyTyped.make(param[0], param[1], /* array */[]));
-                          }), examples);
+              return React.createElement("div", undefined, React.createElement("h1", undefined, "Examples"), $$Array.mapi((function (i, param) {
+                                return ReasonReact.element(String(i), undefined, Example$StronglyTyped.make(param[0], param[1], /* array */[]));
+                              }), examples));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

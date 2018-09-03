@@ -24,7 +24,7 @@ function drawStatusBar(context, ui, state, score) {
   var match = state[/* base */3];
   context.fillStyle = "red";
   context.fillRect(10.0, ui[/* height */0] + 10.0, Caml_primitive.caml_float_min(100.0, Curry._2(state[/* crashCollector */4][/* percentCovered */2], match[0], match[1])), 40.0 - 20.0);
-  context.font = "20px bold arial";
+  context.font = "20px neuropol x rg";
   var str = Curry._1(ui[/* input */2], /* () */0);
   var inputWidth = context.measureText(str).width;
   var inputLeft = ui[/* width */1] / 2.0 - inputWidth / 2.0;
@@ -63,7 +63,7 @@ function splitText(context, text, input, left, bottom, color, matchColor) {
 
 function drawBonus(context, bonus, image, ui) {
   context.drawImage(image, bonus[/* x */0], bonus[/* startY */1] + bonus[/* offsetY */2]);
-  context.font = "16px arial";
+  context.font = "16px neuropol x rg";
   var imageWidth = image.width;
   var imageCenter = bonus[/* x */0] + imageWidth / 2.0;
   var text = "manifold";
@@ -77,7 +77,7 @@ function renderWords(context, state, width, height, input) {
   context.clearRect(0, 0, width | 0, (height | 0) + 40 | 0);
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height);
-  context.font = String(30) + "px arial";
+  context.font = String(30) + "px neuropol x rg";
   List.iter((function (word) {
           return splitText(context, word[/* text */0], input, word[/* x */2], word[/* y */3], "blue", "red");
         }), state[/* words */1]);
@@ -125,7 +125,7 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
     return input[0];
   };
   var ui_004 = function (str) {
-    context.font = String(30) + "px bold arial";
+    context.font = String(30) + "px neuropol x rg";
     return context.measureText(str).width;
   };
   var ui_005 = function () {
@@ -150,7 +150,7 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
   var tick = function (state) {
     if (state[/* gameOver */0]) {
       var text = "GAME OVER";
-      context.font = "90px bold arial";
+      context.font = "90px neuropol x rg";
       context.fillStyle = "purple";
       context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
       canvas.removeEventListener("click", playPause);
@@ -198,7 +198,7 @@ function boot(canvas, height, width, initialState, nextState) {
   context.fillStyle = "black";
   context.fillRect(0.0, 0.0, width, height + 40.0);
   var text = "START GAME";
-  context.font = "90px bold arial";
+  context.font = "90px neuropol x rg";
   context.fillStyle = "purple";
   context.fillText(text, width / 2.0 - context.measureText(text).width / 2.0, height / 2.0);
   var startGame = function () {

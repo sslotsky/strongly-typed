@@ -7,6 +7,9 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Play$StronglyTyped from "./play.bs.js";
 import * as Examples$StronglyTyped from "./examples.bs.js";
 
+require('./assets/app.css')
+;
+
 var component = ReasonReact.reducerComponent("App");
 
 function getRoute(url) {
@@ -74,4 +77,4 @@ export {
   make ,
   
 }
-/* component Not a pure module */
+/*  Not a pure module */

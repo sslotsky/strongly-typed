@@ -11,6 +11,8 @@ let component = ReasonReact.reducerComponent("Example");
 
 let (height, width) = (300.0, 600.0);
 
+let style = ReactDOMRe.Style.make(~width="600px", ~marginBottom="1rem", ());
+
 let make = (~exampleState: Common.state, ~input, _children) => {
   ...component,
   initialState: () => { initialized: false },
@@ -22,5 +24,5 @@ let make = (~exampleState: Common.state, ~input, _children) => {
     }) 
     | _ => ReasonReact.NoUpdate
   }},
-  render: self => <canvas height={height->string_of_float} width={width->string_of_float} ref={node => self.send(Ready(Js.Nullable.toOption(node)))} />
+  render: self => <canvas style={style} height={height->string_of_float} width={width->string_of_float} ref={node => self.send(Ready(Js.Nullable.toOption(node)))} />
 };

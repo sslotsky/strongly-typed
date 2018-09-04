@@ -45,7 +45,6 @@ function make() {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               var watcherId = ReasonReact.Router[/* watchUrl */1]((function (url) {
-                      debugger;
                       return Curry._1(self[/* send */3], /* RouteUpdate */[getRoute(url)]);
                     }));
               return Curry._1(self[/* onUnmount */4], (function () {

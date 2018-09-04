@@ -36,7 +36,6 @@ let make = _ => {
   },
   didMount: self => {
     let watcherId = ReasonReact.Router.watchUrl(url => {
-      [%debugger];
       RouteUpdate(url->getRoute) |> self.send;
     });
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherId));

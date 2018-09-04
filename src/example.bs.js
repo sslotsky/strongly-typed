@@ -10,6 +10,11 @@ import * as Canvas$StronglyTyped from "./canvas.bs.js";
 
 var component = ReasonReact.reducerComponent("Example");
 
+var style = {
+  marginBottom: "1rem",
+  width: "600px"
+};
+
 function make(exampleState, input, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -26,6 +31,7 @@ function make(exampleState, input, _) {
                           ref: (function (node) {
                               return Curry._1(self[/* send */3], /* Ready */[(node == null) ? undefined : Js_primitive.some(node)]);
                             }),
+                          style: style,
                           height: Pervasives.string_of_float(300.0),
                           width: Pervasives.string_of_float(600.0)
                         });
@@ -62,6 +68,7 @@ export {
   component ,
   height ,
   width ,
+  style ,
   make ,
   
 }

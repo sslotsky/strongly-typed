@@ -1,9 +1,4 @@
-@font-face {
-  font-family: "neuropol x rg";
-  src: url("./neuropol x rg.ttf") format("truetype");
-}
-
 body {
   font-size: 16px;
-  font-family: "neuropol x rg";
+  font-family: "Courier New";
 }

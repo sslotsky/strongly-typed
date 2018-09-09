@@ -62,6 +62,9 @@ type assetConfig = {
   bonus: image
 };
 
+let fontName = "Courier New";
+let font = px => "bold " ++ px->string_of_int ++ "px " ++ fontName;
+
 let drawStatusBar = (context, ui: ui, state, score) => {
   context->fillStyleSet("gray");
   context->fillRect(0.0, ui.height, ui.width, statusBarHeight);
@@ -73,7 +76,7 @@ let drawStatusBar = (context, ui: ui, state, score) => {
   context->fillStyleSet("red");
   context->fillRect(10.0, ui.height +. 10.0, min(100.0, state.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
 
-  context->fontSet("20px neuropol x rg");
+  context->fontSet(font(20));
   let inputWidth = context->calculateWidth(ui.input());
   let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
 
@@ -105,7 +108,7 @@ let splitText = (context, text, input, left, bottom, color, matchColor) => {
 
 let drawBonus = (context, bonus: bonus, image, ui) => {
   context->drawImage(image, bonus.x, bonus.startY +. bonus.offsetY);
-  context->fontSet("16px neuropol x rg");
+  context->fontSet(font(16));
 
   let imageWidth = image->imageWidthGet;
   let imageCenter = bonus.x +. (imageWidth->float_of_int /. 2.0);
@@ -122,7 +125,7 @@ let renderWords = (context, state, width, height, input) => {
   context->fillStyleSet("black");
   context->fillRect(0.0, 0.0, width, height);
 
-  context->fontSet(fontSize->string_of_int ++ "px neuropol x rg");
+  context->fontSet(font(fontSize));
 
   state.words |> List.iter(word => {
     context->splitText(word.text, input, word.x, word.y, "blue", "red");
@@ -167,7 +170,7 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
     input: () => input^,
     clearInput,
     calculateWidth: str => {
-      context->fontSet(fontSize->string_of_int ++ "px neuropol x rg");
+      context->fontSet(font(fontSize));
       context->calculateWidth(str);
     },
     onCrash: _ => audioContext->playSound(boomSound),
@@ -184,7 +187,7 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
   let rec tick = state => {
     if (state.gameOver) {
       let text = "GAME OVER";
-      context->fontSet("90px neuropol x rg");
+      context->fontSet(font(90));
       context->fillStyleSet("purple");
       context->fillText(text, (ui.width /. 2.0) -. (context->calculateWidth(text) /. 2.0), ui.height /. 2.0);
       canvas->unsubscribe("click", playPause);
@@ -225,7 +228,7 @@ let boot = (canvas, height, width, initialState, nextState) => {
   context->fillRect(0.0, 0.0, width, height +. statusBarHeight);
 
   let text = "START GAME";
-  context->fontSet("90px neuropol x rg");
+  context->fontSet(font(90));
   context->fillStyleSet("purple");
   context->fillText(text, (width /. 2.0) -. (context->calculateWidth(text) /. 2.0), height /. 2.0);
 

@@ -74,8 +74,8 @@ let example4 = static([
 ]);
 
 example4.crashCollector.crash({ left: 100.0, right: 130.0});
-example4.crashCollector.crash({ left: 260.0, right: 315.0});
-example4.crashCollector.crash({ left: 325.0, right: 400.0});
+example4.crashCollector.crash({ left: 200.0, right: 240.0});
+example4.crashCollector.crash({ left: 260.0, right: 300.0});
 example4.crashCollector.crash({ left: 500.0, right: 550.0});
 
 let examples = [|(example1, "Bungalo B"), (example2, "Scala"), (example3, "Roc"), (example4, "Neo")|];

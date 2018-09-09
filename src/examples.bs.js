@@ -116,13 +116,13 @@ Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
     ]);
 
 Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
-      /* left */260.0,
-      /* right */315.0
+      /* left */200.0,
+      /* right */240.0
     ]);
 
 Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
-      /* left */325.0,
-      /* right */400.0
+      /* left */260.0,
+      /* right */300.0
     ]);
 
 Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[

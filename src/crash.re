@@ -1,21 +1,27 @@
 open Common;
 
-let crashSite = () => {
+let connectRight = (a, b) => {
+  { left: a.left, right: max(a.right, b.right) };
+};
+
+let crashSite = (left, right) => {
   let sites = ref([]);
 
-  let crash = site => {
+  let covers = (x, y) => sites^ |> List.exists(site => site.left <= x && site.right >= y);
+
+  let insert = site => {
     let (leftSide, rightSide) = sites^ |> List.partition(s => s.left <= site.left);
     let (overlap, rest) = rightSide |> List.partition(s => s.left <= site.right);
 
     let rightSide = switch(overlap) {
     | [] => [site, ...rightSide]
-    | _ => let closest = overlap->List.rev->List.hd; [{ left: site.left, right: max(site.right, closest.right) }, ...rest]
+    | _ => let closest = overlap->List.rev->List.hd; [site->connectRight(closest), ...rest]
     }
 
     let site = rightSide->List.hd;
 
     let leftSide = switch (leftSide->List.rev) {
-    | [s, ...rest] when s.right >= site.left => rest->List.rev->List.append([{ left: s.left, right: max(site.right, s.right) }])
+    | [s, ...rest] when s.right >= site.left => [s->connectRight(site), ...rest]->List.rev
     | _ => leftSide->List.append([site])
     };
 
@@ -25,7 +31,16 @@ let crashSite = () => {
     };
   };
 
-  let covers = (x, y) => sites^ |> List.exists(site => site.left <= x && site.right >= y);
+  let crash = site => {
+    let site = { left: max(site.left, left), right: min(site.right, right) };
+    if (!covers(site.left, site.right)) {
+      insert(site);
+      true;
+    } else {
+      false;
+    };
+  };
+
 
   let percentCovered = (x, y) => {
     let (x, y) = (min(x, y), max(x, y));

@@ -12,6 +12,8 @@ import * as Canvas$StronglyTyped from "./canvas.bs.js";
 
 var component = ReasonReact.reducerComponent("Play");
 
+var baseRight = 1200.0 - 30.0;
+
 var canvasHeight = 600.0 + 40.0;
 
 function make() {
@@ -46,18 +48,21 @@ function make() {
                 return /* UpdateWithSideEffects */Block.__(2, [
                           /* record */[/* initialized */true],
                           (function () {
-                              var initialState_003 = /* base : tuple */[
+                              var initialState_005 = /* base : tuple */[
                                 30.0,
-                                1200.0 - 30.0
+                                baseRight
                               ];
-                              var initialState_004 = /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0);
+                              var initialState_006 = /* crashCollector */Crash$StronglyTyped.crashSite(30.0, baseRight);
                               var initialState = /* record */[
                                 /* gameOver */false,
                                 /* words : [] */0,
+                                /* captured : [] */0,
+                                /* crashed : [] */0,
                                 /* ticks */0,
-                                initialState_003,
-                                initialState_004,
-                                /* bonus */undefined
+                                initialState_005,
+                                initialState_006,
+                                /* bonus */undefined,
+                                /* clear */false
                               ];
                               return Canvas$StronglyTyped.boot(node, 600.0, 1200.0, initialState, Game$StronglyTyped.nextState);
                             })
@@ -78,12 +83,16 @@ var baseMargin = 30.0;
 
 var statusBarHeight = 40.0;
 
+var baseLeft = 30.0;
+
 export {
   component ,
   height ,
   width ,
   baseMargin ,
   statusBarHeight ,
+  baseLeft ,
+  baseRight ,
   canvasHeight ,
   make ,
   

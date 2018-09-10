@@ -1,7 +1,6 @@
 open Common;
 
 let words = ["Messaging", "Logging", "Memory Store", "postgresql", "kubernetes", "terraform", "mysql", "serverless", "containerization", "scalability", "Redis", "RabbitMQ", "machine learning", "analytics", "Optimization", "CMS", "Elastic", "Algolia", "Jaws", "Timber", "Iron", "Piio"];
-let bonusWord = "manifold";
 
 let spawn = ui => {
   let word = words->List.nth(Random.int(words->List.length - 1));
@@ -10,9 +9,7 @@ let spawn = ui => {
 };
 
 let bonusCaptured = (state: state, ui) => {
-  ui.clearInput();
-  List.iter(ui.onCollect, state.words);
-  { ...state, words: [], bonus: None };
+  { ...state, words: [], bonus: None, crashed: [], captured: state.words, clear: true };
 };
 
 let collect = (state: state, ui) => {
@@ -20,28 +17,10 @@ let collect = (state: state, ui) => {
   let (crashed, remaining) = falling |> List.partition(w => w.y > ui.height);
   let (baseLeft, baseRight) = state.base;
 
-  let matchesBonus = switch(state.bonus) {
-  | None => false
-  | Some(_) => bonusWord->startsWith(ui.input())
-  };
-
-  let matchesWord = remaining |> List.exists(ui.input()->isPrefixOf);
-
-  if (captured->List.length > 0 || !(matchesBonus || matchesWord)) {
-    ui.clearInput();
-  };
-
-  crashed |> List.iter(word => {
+  let crashed = crashed |> List.filter(word => {
     let (left, right) = (word.x, word.x +. ui.calculateWidth(word.text));
-
-    if (!state.crashCollector.covers(max(baseLeft, left), min(baseRight, right))) {
-      ui.onCrash(word);
-      state.crashCollector.crash({ left, right });
-    };
-
+    state.crashCollector.crash({ left, right });
   });
-
-  captured |> List.iter(ui.onCollect);
 
   let newWords = remaining |> List.map(word => { ...word, y: word.y +. word.velocity });
 
@@ -58,7 +37,16 @@ let collect = (state: state, ui) => {
   | Some(bonus) => Some(bonus->Bonus.tick(ui))
   };
 
-  { ...state, words: newWords, ticks: state.ticks + 1, gameOver, bonus: newBonus };
+  let matchesBonus = switch(state.bonus) {
+  | None => false
+  | Some(_) => bonusWord->startsWith(ui.input())
+  };
+
+  let matchesWord = state.words |> List.exists(ui.input()->isPrefixOf);
+
+  let clear = state.captured->List.length > 0 || !(matchesBonus || matchesWord);
+
+  { ...state, clear, captured, crashed, words: newWords, ticks: state.ticks + 1, gameOver, bonus: newBonus };
 };
 
 let nextState = (state: state, ui) => {

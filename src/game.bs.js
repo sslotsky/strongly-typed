@@ -74,11 +74,9 @@ var words = /* :: */[
   ]
 ];
 
-var bonusWord = "manifold";
-
 function spawn(ui) {
   var word = List.nth(words, Random.$$int(List.length(words) - 1 | 0));
-  var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */4], word);
+  var max = ui[/* width */1] - Curry._1(ui[/* calculateWidth */3], word);
   return /* record */[
           /* text */word,
           /* velocity */1.5 + Random.$$float(2.5),
@@ -87,16 +85,17 @@ function spawn(ui) {
         ];
 }
 
-function bonusCaptured(state, ui) {
-  Curry._1(ui[/* clearInput */3], /* () */0);
-  List.iter(ui[/* onCollect */6], state[/* words */1]);
+function bonusCaptured(state, _) {
   return /* record */[
           /* gameOver */state[/* gameOver */0],
           /* words : [] */0,
-          /* ticks */state[/* ticks */2],
-          /* base */state[/* base */3],
-          /* crashCollector */state[/* crashCollector */4],
-          /* bonus */undefined
+          /* captured */state[/* words */1],
+          /* crashed : [] */0,
+          /* ticks */state[/* ticks */4],
+          /* base */state[/* base */5],
+          /* crashCollector */state[/* crashCollector */6],
+          /* bonus */undefined,
+          /* clear */state[/* clear */8]
         ];
 }
 
@@ -104,37 +103,18 @@ function collect(state, ui) {
   var match = List.partition((function (w) {
           return w[/* text */0] === Curry._1(ui[/* input */2], /* () */0);
         }), state[/* words */1]);
-  var captured = match[0];
   var match$1 = List.partition((function (w) {
           return w[/* y */3] > ui[/* height */0];
         }), match[1]);
-  var remaining = match$1[1];
-  var match$2 = state[/* base */3];
-  var baseRight = match$2[1];
-  var baseLeft = match$2[0];
-  var match$3 = state[/* bonus */5];
-  var matchesBonus = match$3 !== undefined ? Common$StronglyTyped.startsWith(bonusWord, Curry._1(ui[/* input */2], /* () */0)) : false;
-  var partial_arg = Curry._1(ui[/* input */2], /* () */0);
-  var matchesWord = List.exists((function (param) {
-          return Common$StronglyTyped.isPrefixOf(partial_arg, param);
-        }), remaining);
-  if (List.length(captured) > 0 || !(matchesBonus || matchesWord)) {
-    Curry._1(ui[/* clearInput */3], /* () */0);
-  }
-  List.iter((function (word) {
-          var left = word[/* x */2];
-          var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */4], word[/* text */0]);
-          if (Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft > left ? baseLeft : left, baseRight < right ? baseRight : right)) {
-            return 0;
-          } else {
-            Curry._1(ui[/* onCrash */5], word);
-            return Curry._1(state[/* crashCollector */4][/* crash */0], /* record */[
+  var match$2 = state[/* base */5];
+  var crashed = List.filter((function (word) {
+            var left = word[/* x */2];
+            var right = word[/* x */2] + Curry._1(ui[/* calculateWidth */3], word[/* text */0]);
+            return Curry._1(state[/* crashCollector */6][/* crash */0], /* record */[
                         /* left */left,
                         /* right */right
                       ]);
-          }
-        }), match$1[0]);
-  List.iter(ui[/* onCollect */6], captured);
+          }))(match$1[0]);
   var newWords = List.map((function (word) {
           return /* record */[
                   /* text */word[/* text */0],
@@ -142,29 +122,32 @@ function collect(state, ui) {
                   /* x */word[/* x */2],
                   /* y */word[/* y */3] + word[/* velocity */1]
                 ];
-        }), remaining);
-  var match$4 = state[/* ticks */2] % 70;
-  var newWords$1 = match$4 !== 0 ? newWords : List.append(newWords, /* :: */[
+        }), match$1[1]);
+  var match$3 = state[/* ticks */4] % 70;
+  var newWords$1 = match$3 !== 0 ? newWords : List.append(newWords, /* :: */[
           spawn(ui),
           /* [] */0
         ]);
-  var gameOver = Curry._2(state[/* crashCollector */4][/* covers */1], baseLeft, baseRight);
-  var match$5 = state[/* bonus */5];
+  var gameOver = Curry._2(state[/* crashCollector */6][/* covers */1], match$2[0], match$2[1]);
+  var match$4 = state[/* bonus */7];
   var newBonus;
-  if (match$5 !== undefined) {
-    var bonus = match$5;
+  if (match$4 !== undefined) {
+    var bonus = match$4;
     newBonus = bonus[/* x */0] === ui[/* width */1] ? undefined : Bonus$StronglyTyped.tick(bonus, ui);
   } else {
-    var match$6 = Random.$$float(1.0) < 0.002;
-    newBonus = match$6 ? Bonus$StronglyTyped.spawn(/* () */0) : undefined;
+    var match$5 = Random.$$float(1.0) < 0.002;
+    newBonus = match$5 ? Bonus$StronglyTyped.spawn(/* () */0) : undefined;
   }
   return /* record */[
           /* gameOver */gameOver,
           /* words */newWords$1,
-          /* ticks */state[/* ticks */2] + 1 | 0,
-          /* base */state[/* base */3],
-          /* crashCollector */state[/* crashCollector */4],
-          /* bonus */newBonus
+          /* captured */match[0],
+          /* crashed */crashed,
+          /* ticks */state[/* ticks */4] + 1 | 0,
+          /* base */state[/* base */5],
+          /* crashCollector */state[/* crashCollector */6],
+          /* bonus */newBonus,
+          /* clear */state[/* clear */8]
         ];
 }
 
@@ -172,8 +155,8 @@ function nextState(state, ui) {
   if (state[/* gameOver */0]) {
     return state;
   } else {
-    var match = state[/* bonus */5];
-    if (match !== undefined && Curry._1(ui[/* input */2], /* () */0) === bonusWord) {
+    var match = state[/* bonus */7];
+    if (match !== undefined && Curry._1(ui[/* input */2], /* () */0) === Common$StronglyTyped.bonusWord) {
       return bonusCaptured(state, ui);
     } else {
       return collect(state, ui);
@@ -183,7 +166,6 @@ function nextState(state, ui) {
 
 export {
   words ,
-  bonusWord ,
   spawn ,
   bonusCaptured ,
   collect ,

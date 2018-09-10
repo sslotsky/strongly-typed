@@ -9,9 +9,12 @@ function isPrefixOf(input, word) {
   return startsWith(word[/* text */0], input);
 }
 
+var bonusWord = "manifold";
+
 export {
   startsWith ,
   isPrefixOf ,
+  bonusWord ,
   
 }
 /* No side effect */

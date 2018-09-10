@@ -10,6 +10,7 @@ type action =
 let component = ReasonReact.reducerComponent("Play");
 
 let (height, width, baseMargin, statusBarHeight) = (600.0, 1200.0, 30.0, 40.0);
+let (baseLeft, baseRight) = (baseMargin, width -. baseMargin);
 let canvasHeight = height +. statusBarHeight;
 
 let make = (_children) => {
@@ -20,10 +21,13 @@ let make = (_children) => {
     | (Some(node), false) => ReasonReact.UpdateWithSideEffects({ initialized: true }, _ => {
       let initialState = {
         words: [],
+        captured: [],
+        crashed: [],
         ticks: 0,
-        base: (baseMargin, width -. baseMargin),
+        base: (baseLeft, baseRight),
         gameOver: false,
-        crashCollector: Crash.crashSite(),
+        clear: false,
+        crashCollector: Crash.crashSite(baseLeft, baseRight),
         bonus: None
       };
 
@@ -31,5 +35,11 @@ let make = (_children) => {
     }) 
     | _ => ReasonReact.NoUpdate
   }},
-  render: self => <canvas height={canvasHeight->string_of_float} width={width->string_of_float} ref={node => self.send(Ready(Js.Nullable.toOption(node)))} />
+  render: self => (
+    <canvas
+      height={canvasHeight->string_of_float}
+      width={width->string_of_float}
+      ref={node => self.send(Ready(node->Js.Nullable.toOption))}
+    />
+  )
 };

@@ -5,9 +5,25 @@ import * as Js_exn from "bs-platform/lib/es6/js_exn.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
-function crashSite() {
+function connectRight(a, b) {
+  return /* record */[
+          /* left */a[/* left */0],
+          /* right */Caml_primitive.caml_float_max(a[/* right */1], b[/* right */1])
+        ];
+}
+
+function crashSite(left, right) {
   var sites = /* record */[/* contents : [] */0];
-  var crash = function (site) {
+  var covers = function (x, y) {
+    return List.exists((function (site) {
+                  if (site[/* left */0] <= x) {
+                    return site[/* right */1] >= y;
+                  } else {
+                    return false;
+                  }
+                }), sites[0]);
+  };
+  var insert = function (site) {
     var match = List.partition((function (s) {
             return s[/* left */0] <= site[/* left */0];
           }), sites[0]);
@@ -21,10 +37,7 @@ function crashSite() {
     if (overlap) {
       var closest = List.hd(List.rev(overlap));
       rightSide$1 = /* :: */[
-        /* record */[
-          /* left */site[/* left */0],
-          /* right */Caml_primitive.caml_float_max(site[/* right */1], closest[/* right */1])
-        ],
+        connectRight(site, closest),
         match$1[1]
       ];
     } else {
@@ -38,12 +51,9 @@ function crashSite() {
     var leftSide$1;
     if (match$2) {
       var s = match$2[0];
-      leftSide$1 = s[/* right */1] >= site$1[/* left */0] ? List.append(List.rev(match$2[1]), /* :: */[
-              /* record */[
-                /* left */s[/* left */0],
-                /* right */Caml_primitive.caml_float_max(site$1[/* right */1], s[/* right */1])
-              ],
-              /* [] */0
+      leftSide$1 = s[/* right */1] >= site$1[/* left */0] ? List.rev(/* :: */[
+              connectRight(s, site$1),
+              match$2[1]
             ]) : List.append(leftSide, /* :: */[
               site$1,
               /* [] */0
@@ -75,14 +85,19 @@ function crashSite() {
     sites[0] = tmp;
     return /* () */0;
   };
-  var covers = function (x, y) {
-    return List.exists((function (site) {
-                  if (site[/* left */0] <= x) {
-                    return site[/* right */1] >= y;
-                  } else {
-                    return false;
-                  }
-                }), sites[0]);
+  var crash = function (site) {
+    var site_000 = /* left */Caml_primitive.caml_float_max(site[/* left */0], left);
+    var site_001 = /* right */Caml_primitive.caml_float_min(site[/* right */1], right);
+    var site$1 = /* record */[
+      site_000,
+      site_001
+    ];
+    if (covers(site_000, site_001)) {
+      return false;
+    } else {
+      insert(site$1);
+      return true;
+    }
   };
   var percentCovered = function (x, y) {
     var x$1 = x < y ? x : y;
@@ -103,6 +118,7 @@ function crashSite() {
 }
 
 export {
+  connectRight ,
   crashSite ,
   
 }

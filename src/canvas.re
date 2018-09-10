@@ -46,6 +46,12 @@ type image = {
 
 let fontSize = 30;
 let calculateWidth = (context, str) => context->measureText(str)->widthGet;
+let centerText = (context, text, width, height) =>
+  context->fillText(
+    text,
+    width /. 2.0 -. context->calculateWidth(text) /. 2.0,
+    height /. 2.0
+  );
 
 let baseHeight = 5.0;
 let statusBarHeight = 40.0;
@@ -59,11 +65,12 @@ type assetConfig = {
   boomSound: Audio.buffer,
   collectSound: Audio.buffer,
   audioContext: Audio.audioContext,
-  bonus: image
+  bonusImage: image
 };
 
 let fontName = "Courier New";
-let font = px => "bold " ++ px->string_of_int ++ "px " ++ fontName;
+let font = px => px->string_of_int ++ "px " ++ fontName;
+let boldFont = px => "bold " ++ font(px);
 
 let drawStatusBar = (context, ui: ui, state, score) => {
   context->fillStyleSet("gray");
@@ -74,9 +81,14 @@ let drawStatusBar = (context, ui: ui, state, score) => {
 
   let (baseLeft, baseRight) = state.base;
   context->fillStyleSet("red");
-  context->fillRect(10.0, ui.height +. 10.0, min(100.0, state.crashCollector.percentCovered(baseLeft, baseRight)), statusBarHeight -. 20.0);
+  context->fillRect(
+    10.0,
+    ui.height +. 10.0,
+    min(100.0, state.crashCollector.percentCovered(baseLeft, baseRight)),
+    statusBarHeight -. 20.0
+  );
 
-  context->fontSet(font(20));
+  context->fontSet(boldFont(20));
   let inputWidth = context->calculateWidth(ui.input());
   let inputLeft = (ui.width /. 2.0) -. (inputWidth /. 2.0);
 
@@ -108,7 +120,7 @@ let splitText = (context, text, input, left, bottom, color, matchColor) => {
 
 let drawBonus = (context, bonus: bonus, image, ui) => {
   context->drawImage(image, bonus.x, bonus.startY +. bonus.offsetY);
-  context->fontSet(font(16));
+  context->fontSet(boldFont(16));
 
   let imageWidth = image->imageWidthGet;
   let imageCenter = bonus.x +. (imageWidth->float_of_int /. 2.0);
@@ -125,7 +137,7 @@ let renderWords = (context, state, width, height, input) => {
   context->fillStyleSet("black");
   context->fillRect(0.0, 0.0, width, height);
 
-  context->fontSet(font(fontSize));
+  context->fontSet(boldFont(fontSize));
 
   state.words |> List.iter(word => {
     context->splitText(word.text, input, word.x, word.y, "blue", "red");
@@ -142,7 +154,7 @@ let renderWords = (context, state, width, height, input) => {
 };
 
 let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState) => {
-  let ({width, height}, {audioContext, boomSound, collectSound, bonus}) = (dimensions, assetConfig);
+  let ({width, height}, {audioContext, boomSound, collectSound, bonusImage}) = (dimensions, assetConfig);
   let input = ref("");
   let score = ref(0);
   let paused = ref(false);
@@ -164,20 +176,21 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
     input := (input^) ++ e->keyGet;
   };
 
+  let onCrash = _ => audioContext->playSound(boomSound);
+
+  let onCollect = word => {
+    audioContext->playSound(collectSound);
+    score := score^ + (word.text->String.length * (10.0 *. word.velocity)->int_of_float);
+  };
+
   let ui = {
     height,
     width,
     input: () => input^,
-    clearInput,
     calculateWidth: str => {
-      context->fontSet(font(fontSize));
+      context->fontSet(boldFont(fontSize));
       context->calculateWidth(str);
     },
-    onCrash: _ => audioContext->playSound(boomSound),
-    onCollect: word => {
-      audioContext->playSound(collectSound);
-      score := score^ + (word.text->String.length * (10.0 *. word.velocity)->int_of_float);
-    }
   };
 
   canvas->subscribe("click", playPause);
@@ -189,7 +202,7 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
       let text = "GAME OVER";
       context->fontSet(font(90));
       context->fillStyleSet("purple");
-      context->fillText(text, (ui.width /. 2.0) -. (context->calculateWidth(text) /. 2.0), ui.height /. 2.0);
+      context->centerText(text, ui.width, ui.height);
       canvas->unsubscribe("click", playPause);
       removeWindowEvent("keypress", keypress);
 
@@ -198,7 +211,8 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
         canvas->unsubscribe("click", restart);
         canvas->subscribe("click", playPause);
         addWindowEvent("keypress", keypress);
-        { ...initialState, crashCollector: Crash.crashSite() }->tick;
+        let (baseLeft, baseRight) = state.base;
+        { ...initialState, crashCollector: Crash.crashSite(baseLeft, baseRight) }->tick;
       };
 
       canvas->subscribe("click", restart);
@@ -206,12 +220,19 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
       animate(() => state->tick);
     } else {
       let newState = state->nextState(ui);
+      newState.captured |> List.iter(onCollect);
+      newState.crashed |> List.iter(onCrash);
+
+      if (newState.clear) {
+        clearInput();
+      };
+
       context->renderWords(newState, ui.width, ui.height, ui.input());
       context->drawStatusBar(ui, newState, score^);
 
       switch (newState.bonus) {
       | None => ()
-      | Some(b) => context->drawBonus(b, bonus, ui)
+      | Some(b) => context->drawBonus(b, bonusImage, ui)
       };
 
       animate(() => newState->tick);
@@ -230,7 +251,7 @@ let boot = (canvas, height, width, initialState, nextState) => {
   let text = "START GAME";
   context->fontSet(font(90));
   context->fillStyleSet("purple");
-  context->fillText(text, (width /. 2.0) -. (context->calculateWidth(text) /. 2.0), height /. 2.0);
+  context->centerText(text, width, height);
 
   let rec startGame = (_) => {
     canvas->unsubscribe("click", startGame);
@@ -238,19 +259,23 @@ let boot = (canvas, height, width, initialState, nextState) => {
     let ctx = audioContext();
     let loadBoom = ctx->loadSound(boom);
     let loadCollect = ctx->loadSound(collect);
-    let bonus = createImage();
+    let bonusImage = createImage();
 
-    bonus->onloadSet(() => {
+    bonusImage->onloadSet(() => {
       loadBoom |> Js.Promise.then_(boomSound => {
         loadCollect |> Js.Promise.then_(collectSound => {
-          let start = (canvas, context)->paint({width, height}, {audioContext: ctx, boomSound, collectSound, bonus});
+          let start = (canvas, context)->paint(
+            {width, height},
+            {audioContext: ctx, boomSound, collectSound, bonusImage}
+          );
+
           start(initialState, nextState);
           Js.Promise.resolve();
         })
       }) |> ignore;
     });
 
-    bonus->srcSet(manicon);
+    bonusImage->srcSet(manicon);
   };
 
   canvas->subscribe("click", startGame);

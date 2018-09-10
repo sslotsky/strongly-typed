@@ -4,10 +4,13 @@ let component = ReasonReact.statelessComponent("Examples");
 
 let static = words => {
   words,
+  captured: [],
+  crashed: [],
   ticks: 0,
   base: (0.0, 600.0),
   gameOver: false,
-  crashCollector: Crash.crashSite(),
+  clear: false,
+  crashCollector: Crash.crashSite(0.0, 600.0),
   bonus: None
 };
 

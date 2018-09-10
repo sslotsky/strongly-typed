@@ -13,13 +13,16 @@ function $$static(words) {
   return /* record */[
           /* gameOver */false,
           /* words */words,
+          /* captured : [] */0,
+          /* crashed : [] */0,
           /* ticks */0,
           /* base : tuple */[
             0.0,
             600.0
           ],
-          /* crashCollector */Crash$StronglyTyped.crashSite(/* () */0),
-          /* bonus */undefined
+          /* crashCollector */Crash$StronglyTyped.crashSite(0.0, 600.0),
+          /* bonus */undefined,
+          /* clear */false
         ];
 }
 
@@ -67,7 +70,7 @@ var example2 = $$static(/* :: */[
       ]
     ]);
 
-Curry._1(example2[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example2[/* crashCollector */6][/* crash */0], /* record */[
       /* left */260.0,
       /* right */315.0
     ]);
@@ -90,12 +93,12 @@ var example3 = $$static(/* :: */[
       ]
     ]);
 
-Curry._1(example3[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example3[/* crashCollector */6][/* crash */0], /* record */[
       /* left */260.0,
       /* right */315.0
     ]);
 
-Curry._1(example3[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example3[/* crashCollector */6][/* crash */0], /* record */[
       /* left */520.0,
       /* right */550.0
     ]);
@@ -110,22 +113,22 @@ var example4 = $$static(/* :: */[
       /* [] */0
     ]);
 
-Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
       /* left */100.0,
       /* right */130.0
     ]);
 
-Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
       /* left */200.0,
       /* right */240.0
     ]);
 
-Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
       /* left */260.0,
       /* right */300.0
     ]);
 
-Curry._1(example4[/* crashCollector */4][/* crash */0], /* record */[
+Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
       /* left */500.0,
       /* right */550.0
     ]);

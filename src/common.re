@@ -2,7 +2,7 @@ type bonus = {
   x: float,
   startY: float,
   offsetY: float,
-  amplitude: int,
+  amplitude: int
 };
 
 type word = {
@@ -18,7 +18,7 @@ type crashSite = {
 };
 
 type crashCollector = {
-  crash: crashSite => unit,
+  crash: crashSite => bool,
   covers: (float, float) => bool,
   percentCovered: (float, float) => float,
   sites: unit => list(crashSite)
@@ -27,21 +27,22 @@ type crashCollector = {
 type state = {
   gameOver: bool,
   words: list(word),
+  captured: list(word),
+  crashed: list(word),
   ticks: int,
   base: (float, float),
   crashCollector: crashCollector,
-  bonus: option(bonus)
+  bonus: option(bonus),
+  clear: bool
 };
 
 type ui = {
   height: float,
   width: float,
   input: unit => string,
-  clearInput: unit => unit,
-  calculateWidth: string => float,
-  onCrash: word => unit,
-  onCollect: word => unit
+  calculateWidth: string => float
 };
 
 let startsWith = (str, input) => str->Js.Re.test(("^" ++ input)->Js.Re.fromString);
 let isPrefixOf = (input, word) => word.text->startsWith(input);
+let bonusWord = "manifold";

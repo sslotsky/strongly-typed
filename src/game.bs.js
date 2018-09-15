@@ -85,7 +85,7 @@ function spawn(ui) {
         ];
 }
 
-function bonusCaptured(state, _) {
+function bonusCaptured(state) {
   return /* record */[
           /* gameOver */state[/* gameOver */0],
           /* words : [] */0,
@@ -95,7 +95,7 @@ function bonusCaptured(state, _) {
           /* base */state[/* base */5],
           /* crashCollector */state[/* crashCollector */6],
           /* bonus */undefined,
-          /* clear */state[/* clear */8]
+          /* clear */true
         ];
 }
 
@@ -103,6 +103,7 @@ function collect(state, ui) {
   var match = List.partition((function (w) {
           return w[/* text */0] === Curry._1(ui[/* input */2], /* () */0);
         }), state[/* words */1]);
+  var captured = match[0];
   var match$1 = List.partition((function (w) {
           return w[/* y */3] > ui[/* height */0];
         }), match[1]);
@@ -138,16 +139,22 @@ function collect(state, ui) {
     var match$5 = Random.$$float(1.0) < 0.002;
     newBonus = match$5 ? Bonus$StronglyTyped.spawn(/* () */0) : undefined;
   }
+  var matchesBonus = newBonus !== undefined ? Common$StronglyTyped.startsWith(Common$StronglyTyped.bonusWord, Curry._1(ui[/* input */2], /* () */0)) : false;
+  var partial_arg = Curry._1(ui[/* input */2], /* () */0);
+  var matchesWord = List.exists((function (param) {
+          return Common$StronglyTyped.isPrefixOf(partial_arg, param);
+        }), newWords$1);
+  var clear = List.length(captured) > 0 || !(matchesBonus || matchesWord);
   return /* record */[
           /* gameOver */gameOver,
           /* words */newWords$1,
-          /* captured */match[0],
+          /* captured */captured,
           /* crashed */crashed,
           /* ticks */state[/* ticks */4] + 1 | 0,
           /* base */state[/* base */5],
           /* crashCollector */state[/* crashCollector */6],
           /* bonus */newBonus,
-          /* clear */state[/* clear */8]
+          /* clear */clear
         ];
 }
 
@@ -157,7 +164,7 @@ function nextState(state, ui) {
   } else {
     var match = state[/* bonus */7];
     if (match !== undefined && Curry._1(ui[/* input */2], /* () */0) === Common$StronglyTyped.bonusWord) {
-      return bonusCaptured(state, ui);
+      return bonusCaptured(state);
     } else {
       return collect(state, ui);
     }

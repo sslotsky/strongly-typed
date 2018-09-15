@@ -8,7 +8,7 @@ let spawn = ui => {
   { text: word, x: Random.float(max), y: 0.0, velocity: 1.5 +. Random.float(2.5) };
 };
 
-let bonusCaptured = (state: state, ui) => {
+let bonusCaptured = (state: state) => {
   { ...state, words: [], bonus: None, crashed: [], captured: state.words, clear: true };
 };
 
@@ -37,14 +37,14 @@ let collect = (state: state, ui) => {
   | Some(bonus) => Some(bonus->Bonus.tick(ui))
   };
 
-  let matchesBonus = switch(state.bonus) {
+  let matchesBonus = switch(newBonus) {
   | None => false
   | Some(_) => bonusWord->startsWith(ui.input())
   };
 
-  let matchesWord = state.words |> List.exists(ui.input()->isPrefixOf);
+  let matchesWord = newWords |> List.exists(ui.input()->isPrefixOf);
 
-  let clear = state.captured->List.length > 0 || !(matchesBonus || matchesWord);
+  let clear = captured->List.length > 0 || !(matchesBonus || matchesWord);
 
   { ...state, clear, captured, crashed, words: newWords, ticks: state.ticks + 1, gameOver, bonus: newBonus };
 };
@@ -54,7 +54,7 @@ let nextState = (state: state, ui) => {
     state;
   } else {
     switch(state.bonus) {
-    | Some(_) when ui.input() == bonusWord => state->bonusCaptured(ui)
+    | Some(_) when ui.input() == bonusWord => state->bonusCaptured
     | _ => state->collect(ui)
     }
   };

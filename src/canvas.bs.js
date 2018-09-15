@@ -129,8 +129,12 @@ function paint(param, dimensions, assetConfig, initialState, nextState) {
     return /* () */0;
   };
   var keypress = function (e) {
-    input[0] = input[0] + e.key;
-    return /* () */0;
+    if (paused[0]) {
+      return 0;
+    } else {
+      input[0] = input[0] + e.key;
+      return /* () */0;
+    }
   };
   var onCrash = function () {
     return Audio$StronglyTyped.playSound(audioContext, boomSound);

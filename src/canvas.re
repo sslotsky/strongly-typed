@@ -173,7 +173,9 @@ let paint = ((canvas, context), dimensions, assetConfig, initialState, nextState
   };
 
   let keypress = e => {
-    input := (input^) ++ e->keyGet;
+    if (!paused^) {
+      input := (input^) ++ e->keyGet;
+    }
   };
 
   let onCrash = _ => audioContext->playSound(boomSound);

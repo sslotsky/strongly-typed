@@ -33,7 +33,7 @@ let collect = (state: state, ui) => {
 
   let newBonus = switch (state.bonus) {
   | Some(bonus) when bonus.x == ui.width => None
-  | None => Random.float(1.0) < 0.002 ? Some(Bonus.spawn()) : None
+  | None => Random.float(1.0) < 0.0015 ? Some(Bonus.spawn()) : None
   | Some(bonus) => Some(bonus->Bonus.tick(ui))
   };
 

@@ -66,6 +66,7 @@ let example3 = static([
 
 example3.crashCollector.crash({ left: 260.0, right: 315.0});
 example3.crashCollector.crash({ left: 520.0, right: 550.0});
+example3.crashCollector.crash({ left: 20.0, right: 80.0});
 
 let example4 = static([
   {
@@ -76,12 +77,25 @@ let example4 = static([
   }
 ]);
 
-example4.crashCollector.crash({ left: 100.0, right: 130.0});
+example4.crashCollector.crash({ left: 10.0, right: 70.0 });
+example4.crashCollector.crash({ left: 80.0, right: 130.0});
 example4.crashCollector.crash({ left: 200.0, right: 240.0});
 example4.crashCollector.crash({ left: 260.0, right: 300.0});
-example4.crashCollector.crash({ left: 500.0, right: 550.0});
+example4.crashCollector.crash({ left: 470.0, right: 550.0});
 
-let examples = [|(example1, "Bungalo B"), (example2, "Scala"), (example3, "Roc"), (example4, "Neo")|];
+let noRightOverlap = static([
+  {
+    x: 37.0,
+    y: 250.0,
+    text: "narcolepsy",
+    velocity: 0.0
+  }
+]);
+
+noRightOverlap.crashCollector.crash({ left: 260.0, right: 320.0 });
+noRightOverlap.crashCollector.crash({ left: 350.0, right: 420.0 });
+
+let examples = [|(example1, "Bungalo B"), (noRightOverlap, "narco"), (example2, "Scala"), (example3, "Roc"), (example4, "Neo")|];
 
 let style = ReactDOMRe.Style.make(~display="flex", ~flexDirection="column", ());
 

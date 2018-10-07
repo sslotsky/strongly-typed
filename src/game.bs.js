@@ -136,7 +136,7 @@ function collect(state, ui) {
     var bonus = match$4;
     newBonus = bonus[/* x */0] === ui[/* width */1] ? undefined : Bonus$StronglyTyped.tick(bonus, ui);
   } else {
-    var match$5 = Random.$$float(1.0) < 0.002;
+    var match$5 = Random.$$float(1.0) < 0.0015;
     newBonus = match$5 ? Bonus$StronglyTyped.spawn(/* () */0) : undefined;
   }
   var matchesBonus = newBonus !== undefined ? Common$StronglyTyped.startsWith(Common$StronglyTyped.bonusWord, Curry._1(ui[/* input */2], /* () */0)) : false;

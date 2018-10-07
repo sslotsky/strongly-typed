@@ -103,6 +103,11 @@ Curry._1(example3[/* crashCollector */6][/* crash */0], /* record */[
       /* right */550.0
     ]);
 
+Curry._1(example3[/* crashCollector */6][/* crash */0], /* record */[
+      /* left */20.0,
+      /* right */80.0
+    ]);
+
 var example4 = $$static(/* :: */[
       /* record */[
         /* text */"Neologisms",
@@ -114,7 +119,12 @@ var example4 = $$static(/* :: */[
     ]);
 
 Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
-      /* left */100.0,
+      /* left */10.0,
+      /* right */70.0
+    ]);
+
+Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
+      /* left */80.0,
       /* right */130.0
     ]);
 
@@ -129,14 +139,38 @@ Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
     ]);
 
 Curry._1(example4[/* crashCollector */6][/* crash */0], /* record */[
-      /* left */500.0,
+      /* left */470.0,
       /* right */550.0
+    ]);
+
+var noRightOverlap = $$static(/* :: */[
+      /* record */[
+        /* text */"narcolepsy",
+        /* velocity */0.0,
+        /* x */37.0,
+        /* y */250.0
+      ],
+      /* [] */0
+    ]);
+
+Curry._1(noRightOverlap[/* crashCollector */6][/* crash */0], /* record */[
+      /* left */260.0,
+      /* right */320.0
+    ]);
+
+Curry._1(noRightOverlap[/* crashCollector */6][/* crash */0], /* record */[
+      /* left */350.0,
+      /* right */420.0
     ]);
 
 var examples = /* array */[
   /* tuple */[
     example1,
     "Bungalo B"
+  ],
+  /* tuple */[
+    noRightOverlap,
+    "narco"
   ],
   /* tuple */[
     example2,
@@ -194,6 +228,7 @@ export {
   example2 ,
   example3 ,
   example4 ,
+  noRightOverlap ,
   examples ,
   style ,
   make ,

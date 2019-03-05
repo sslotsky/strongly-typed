@@ -16,3 +16,7 @@ npm run start
 
 # Editor
 If you use `vscode`, Press `Windows + Shift + B` it will build automatically
+
+## Checks
+
+This is a test

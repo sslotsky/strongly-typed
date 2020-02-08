@@ -7,7 +7,7 @@
     "clean": "bsb -clean-world",
     "deploy": "yarn build && yarn clean-dist && yarn build-dist && yarn dist",
     "clean-dist": "rm -r dist/*",
-    "build-dist": "yarn parcel build index.html",
+    "build-dist": "yarn parcel build index.html; cp _redirects dist/",
     "dist": "cd dist; cp index.html 200.html; surge --domain lavish-balloon.surge.sh"
   },
   "keywords": [

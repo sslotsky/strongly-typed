@@ -3,12 +3,11 @@
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
-    "start": "bsb -make-world -w",
+    "start": "bsb -make-world -w & parcel index.html",
     "clean": "bsb -clean-world",
-    "deploy": "yarn build && yarn clean-dist && yarn build-dist && yarn dist",
+    "deploy": "npm run build && npm run build-dist",
     "clean-dist": "rm -r dist/*",
-    "build-dist": "yarn parcel build index.html; cp _redirects dist/",
-    "dist": "cd dist; cp index.html 200.html; surge --domain lavish-balloon.surge.sh"
+    "build-dist": "parcel build index.html; cp _redirects dist/"
   },
   "keywords": [
     "BuckleScript"

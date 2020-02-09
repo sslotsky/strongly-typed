@@ -17,7 +17,7 @@
   "devDependencies": {
     "bs-platform": "^4.0.3",
     "bsb-js": "^1.1.7",
-    "parcel-bundler": "^1.9.7"
+    "parcel-bundler": "^1.10.0"
   },
   "main": "index.js",
   "dependencies": {

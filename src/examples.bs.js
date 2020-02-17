@@ -26,6 +26,16 @@ function $$static(words) {
         ];
 }
 
+var example0 = $$static(/* :: */[
+      /* record */[
+        /* text */"A super duper long phrase that doesn't fit",
+        /* velocity */0.0,
+        /* x */320.0,
+        /* y */200.0
+      ],
+      /* [] */0
+    ]);
+
 var example1 = $$static(/* :: */[
       /* record */[
         /* text */"Bungalo Bill",
@@ -165,6 +175,10 @@ Curry._1(noRightOverlap[/* crashCollector */6][/* crash */0], /* record */[
 
 var examples = /* array */[
   /* tuple */[
+    example0,
+    "A sup"
+  ],
+  /* tuple */[
     example1,
     "Bungalo B"
   ],
@@ -224,6 +238,7 @@ function make() {
 export {
   component ,
   $$static ,
+  example0 ,
   example1 ,
   example2 ,
   example3 ,

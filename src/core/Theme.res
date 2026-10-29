@@ -89,6 +89,8 @@ type t = {
   // Applied to the scene so CSS can restyle the window chrome.
   className: string,
   logo: React.element,
+  // SVG markup for the browser tab icon while this theme is showing.
+  favicon?: string,
   copy: copy,
   vocabulary: array<string>,
   bonuses: array<bonus>,

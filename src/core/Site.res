@@ -28,3 +28,23 @@ let initialTheme = themes =>
     ->Option.flatMap(id => themes->find(id))
     ->Option.getOr(themes->Array.getUnsafe(0))
   }
+
+let setFavicon: string => unit = %raw(`svg => {
+  let link = document.querySelector("link[rel~='icon']")
+  if (!link) {
+    link = document.createElement("link")
+    link.rel = "icon"
+    document.head.appendChild(link)
+  }
+  link.type = "image/svg+xml"
+  link.href = "data:image/svg+xml," + encodeURIComponent(svg)
+}`)
+
+// Keep ?theme= on the current theme, so a copied link opens the same one.
+let showInUrl: string => unit = %raw(`id => {
+  const url = new URL(window.location.href)
+  if (url.searchParams.get("theme") !== id) {
+    url.searchParams.set("theme", id)
+    window.history.replaceState(window.history.state, "", url)
+  }
+}`)

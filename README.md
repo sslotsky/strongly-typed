@@ -28,7 +28,31 @@ npm run build   # static site in dist/
 - `src/core/Theme.res` is the contract a theme fills in: vocabulary, tiers,
   bonuses (`ClearAll`, `SlowTime`, `DoublePoints`, `Repair`), copy, and the
   renderers for words, the base, bonus sprites and the backdrop, plus sounds.
-- `src/themes/*` holds the themes; `src/Themes.res` lists them.
+- `src/themes/*` holds the themes. `src/Main.res` mounts `<App themes=Themes.all />`;
+  the core never imports an app's theme list.
 - A site chooses which themes it offers with `VITE_THEMES` (comma-separated
   ids, in switcher order). Unset offers every theme. This site sets it in
   `netlify.toml`.
+
+## Using the core in another app
+
+Install a tagged release and let ReScript compile it with your app:
+
+```sh
+npm i github:sslotsky/strongly-typed#v1.0.0
+```
+
+```json
+// rescript.json
+"dependencies": ["@rescript/react", "strongly-typed"]
+```
+
+Then mount the core with your own themes, and import `strongly-typed/src/styles.css`
+plus your theme's CSS:
+
+```rescript
+ReactDOM.Client.createRoot(root)->ReactDOM.Client.Root.render(<App themes=[MyTheme.theme] />)
+```
+
+Name your entry module something other than `Main`/`Themes`, since ReScript
+modules share one namespace across packages.

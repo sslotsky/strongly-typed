@@ -94,9 +94,9 @@ module TierPicker = {
 
 module ThemeSwitcher = {
   @react.component
-  let make = (~current: Theme.t, ~onSelect) =>
+  let make = (~themes: array<Theme.t>, ~current: Theme.t, ~onSelect) =>
     <div className="themes" role="radiogroup" ariaLabel="Theme">
-      {Site.themes
+      {themes
       ->Array.map(theme => {
         let active = theme.id == current.id
         <button
@@ -114,8 +114,9 @@ module ThemeSwitcher = {
 }
 
 @react.component
-let make = () => {
-  let initialTheme = React.useMemo0(() => Site.initialTheme())
+let make = (~themes: array<Theme.t>) => {
+  let themes = React.useMemo0(() => Site.available(themes))
+  let initialTheme = React.useMemo0(() => Site.initialTheme(themes))
   let backdropRef = React.useRef(Nullable.null)
   let windowRef = React.useRef(Nullable.null)
   let fieldRef = React.useRef(Nullable.null)
@@ -414,8 +415,8 @@ let make = () => {
         <span className="titlebar__name"> {copy.appName->React.string} </span>
         <span className="titlebar__sep"> {"/"->React.string} </span>
         <span className="titlebar__crumb"> {copy.crumb->React.string} </span>
-        {Array.length(Site.themes) > 1
-          ? <ThemeSwitcher current=theme onSelect={t => actions.current.selectTheme(t)} />
+        {Array.length(themes) > 1
+          ? <ThemeSwitcher themes current=theme onSelect={t => actions.current.selectTheme(t)} />
           : React.null}
         <span className="titlebar__hints">
           <Kbd> {"Esc"->React.string} </Kbd>

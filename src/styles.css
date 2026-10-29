@@ -74,6 +74,8 @@ html, body, #root { margin: 0; height: 100%; background: #06070a; color: var(--i
   border-top: 1px solid var(--border);
   background: var(--panel);
   font-family: var(--mono);
+  /* Size to the stage above, never to the typed input. */
+  contain: inline-size;
 }
 .stat { display: flex; align-items: baseline; gap: 8px; }
 .stat--boundary { align-items: center; }
@@ -100,6 +102,8 @@ html, body, #root { margin: 0; height: 100%; background: #06070a; color: var(--i
 
 .prompt {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -111,7 +115,16 @@ html, body, #root { margin: 0; height: 100%; background: #06070a; color: var(--i
   font-size: 15px;
 }
 .prompt__caret { color: var(--accent-bright); }
-.prompt__input { color: var(--success); white-space: pre; }
+/* Long input scrolls left inside the prompt instead of widening the window. */
+.prompt__input {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--success);
+  white-space: pre;
+  display: flex;
+  justify-content: flex-end;
+}
+.prompt > :not(.prompt__input) { flex: none; }
 .prompt__cursor { width: 8px; height: 17px; background: var(--accent-bright); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 

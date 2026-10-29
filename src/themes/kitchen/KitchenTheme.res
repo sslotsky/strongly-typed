@@ -499,6 +499,7 @@ let theme: Theme.t = {
     measure,
     base: drawCoals,
     makeBackdrop: makeSmokehouse,
+    makeScene: KitchenScene.make,
   },
   sound,
 }

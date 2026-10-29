@@ -151,7 +151,7 @@ let make = (~themes: array<Theme.t>) => {
       let tier = ref(loadTier(initialTheme))
       let state = ref(Engine.init(~tier=tier.contents, config.contents))
       let phase = ref(Title)
-      let fx = ref(Stage.makeFx())
+      let fx = ref(Stage.makeFx(initialTheme))
       let best = ref(loadBest(initialTheme, tier.contents))
       let lastHud = ref(freshHud(initialTheme))
       let lastAuditSeq = ref(0)
@@ -215,7 +215,7 @@ let make = (~themes: array<Theme.t>) => {
       let start = () => {
         Synth.unlock()
         state := Engine.init(~tier=tier.contents, config.contents)
-        fx := Stage.makeFx()
+        fx := Stage.makeFx(current.contents)
         phase := Playing
       }
       let togglePause = () =>
@@ -236,7 +236,7 @@ let make = (~themes: array<Theme.t>) => {
           tier := loadTier(next)
           best := loadBest(next, tier.contents)
           state := Engine.init(~tier=tier.contents, config.contents)
-          fx := Stage.makeFx()
+          fx := Stage.makeFx(next)
           phase := Title
           board := layout()
           Dom2.setItem(Site.themeKey, next.id)

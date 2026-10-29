@@ -38,6 +38,25 @@ type backdrop = {
   bonus: Engine.bonusSpec => unit,
 }
 
+// A theme's own playfield effects and set dressing, living alongside the
+// core's sparks and labels. Coordinates are stage coordinates.
+type scene = {
+  onEvent: Engine.event => unit,
+  update: float => unit,
+  // Behind the words, just after the background.
+  drawBack: (Canvas2d.t, ~time: float) => unit,
+  // In front of everything else.
+  drawFront: (Canvas2d.t, ~time: float) => unit,
+}
+
+type stage = {
+  width: float,
+  height: float,
+  // Asks for a screen shake of the given strength (0 to 1); ignored under
+  // prefers-reduced-motion.
+  shake: float => unit,
+}
+
 type look = {
   labelFont: string,
   bonusFont: string,
@@ -54,6 +73,7 @@ type look = {
   measure: (Canvas2d.t, string) => float,
   base: (Canvas2d.t, Shield.t, ~y: float) => unit,
   makeBackdrop: (~width: float, ~height: float, ~window: Dom2.rect) => backdrop,
+  makeScene?: stage => scene,
 }
 
 type sound = {

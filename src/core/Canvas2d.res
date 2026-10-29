@@ -73,3 +73,15 @@ let offscreen = (~width, ~height) => {
   el
 }
 @set external filter: (t, string) => unit = "filter"
+@send external quadraticCurveTo: (t, float, float, float, float) => unit = "quadraticCurveTo"
+@send external ellipse: (t, float, float, float, float, float, float, float) => unit = "ellipse"
+
+let oval = (ctx, x, y, rx, ry, rotation) => {
+  ctx->beginPath
+  ctx->ellipse(x, y, rx, ry, rotation, 0.0, tau)
+}
+
+let lerp = (a, b, p) => a +. (b -. a) *. p
+
+// The fractional position of a within repeating periods of length b.
+let cycle = (a, b) => a -. b *. Math.floor(a /. b)

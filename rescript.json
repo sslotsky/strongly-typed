@@ -1,0 +1,12 @@
+{
+  "name": "strongly-typed",
+  "sources": [
+    { "dir": "src", "subdirs": true },
+    { "dir": "tests", "type": "dev" }
+  ],
+  "package-specs": { "module": "esmodule", "in-source": true },
+  "suffix": ".res.js",
+  "dependencies": ["@rescript/react"],
+  "jsx": { "version": 4 },
+  "warnings": { "error": "+101+8" }
+}

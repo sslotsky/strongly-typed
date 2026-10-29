@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+  # Themes this site offers, in switcher order. Unset offers every theme.
+  VITE_THEMES = "garden"

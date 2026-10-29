@@ -2,20 +2,57 @@
 
 # Strongly Typed
 
-A game to test your typing chops.
+A typing game: words fall, you type them before they land. Every so often a
+bonus drifts across the scene; type it for a power-up.
 
-You're an employee at a tech company, and with each passing day, new tech trends and cloud services go speeding through your universe at an alarming rate. Your competitors are learning to leverage them to increase their competitive edge. Failure to reign them into your own product is damaging your user base. The solution is clear: capture them all!
+The game is one theme-able core plus themes:
 
-As cloud services and tech trends fall from the sky, you must type in their names before they crash into the base. Capturing words will increase your score, but if your base becomes completely destroyed, it's GAME OVER for your business! 
-
-Don't forget to watch out for the bonus!
+- **Pollinator Lawn**: autumn leaves carry native seeds. Sow each one before it
+  lands; every seed plays the next note of a tune. The monarch pollinates
+  everything, the bumblebee slows the wind, the cardinal doubles points and the
+  rabbit regrows the lawn.
 
 ## Running locally
 
-Check out the repo, then:
+```sh
+npm install
+npm run dev     # http://localhost:5173, ?theme=<id> to open a theme
+npm test        # engine tests
+npm run build   # static site in dist/
+```
 
+## How it fits together
+
+- `src/core/Engine.res` is pure: state in, state plus events out. Movement is
+  time-based (`dt`), so the game plays at the same speed on any display.
+- `src/core/Theme.res` is the contract a theme fills in: vocabulary, tiers,
+  bonuses (`ClearAll`, `SlowTime`, `DoublePoints`, `Repair`), copy, and the
+  renderers for words, the base, bonus sprites and the backdrop, plus sounds.
+- `src/themes/*` holds the themes. `src/Main.res` mounts `<App themes=Themes.all />`;
+  the core never imports an app's theme list.
+- A site chooses which themes it offers with `VITE_THEMES` (comma-separated
+  ids, in switcher order). Unset offers every theme. This site sets it in
+  `netlify.toml`.
+
+## Using the core in another app
+
+Install a tagged release and let ReScript compile it with your app:
+
+```sh
+npm i github:sslotsky/strongly-typed#v1.0.0
 ```
-cd strongly-typed
-npm i
-npm start
+
+```json
+// rescript.json
+"dependencies": ["@rescript/react", "strongly-typed"]
 ```
+
+Then mount the core with your own themes, and import `strongly-typed/src/styles.css`
+plus your theme's CSS:
+
+```rescript
+ReactDOM.Client.createRoot(root)->ReactDOM.Client.Root.render(<App themes=[MyTheme.theme] />)
+```
+
+Name your entry module something other than `Main`/`Themes`, since ReScript
+modules share one namespace across packages.

@@ -11,8 +11,6 @@ The game is one theme-able core plus themes:
   lands; every seed plays the next note of a tune. The monarch pollinates
   everything, the bumblebee slows the wind, the cardinal doubles points and the
   rabbit regrows the lawn.
-- **Keycard**: resources fall, typing one is a token exchange, and the unified
-  gateway clears them all.
 
 ## Running locally
 

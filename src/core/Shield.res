@@ -1,5 +1,5 @@
-// The trust boundary along the bottom of the playfield: a fixed row of cells.
-// A resource that reaches it unexchanged breaches the cells beneath it.
+// The base along the bottom of the playfield: a fixed row of cells.
+// A word that reaches it untyped breaches the cells beneath it.
 type t = {cells: array<bool>, width: float}
 
 let make = (~cells, ~width) => {cells: Array.make(~length=cells, true), width}

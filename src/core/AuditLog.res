@@ -1,4 +1,4 @@
-// One row per resource: granted and denied token exchanges, newest first.
+// One row per term: typed and missed counts, newest first.
 @react.component
 let make = (~log: Audit.t, ~copy: Theme.logCopy) => {
   let rows = Audit.recent(log)

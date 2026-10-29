@@ -1,4 +1,4 @@
-// One row per term: how many token exchanges were granted and denied.
+// One row per term: how many times it was typed and missed.
 type outcome = Granted | Denied
 
 type row = {term: string, granted: int, denied: int, last: outcome, seq: int}

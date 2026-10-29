@@ -1,4 +1,4 @@
-// Which themes this deployment offers: VITE_THEMES=keycard,garden (all when unset).
+// Which themes this deployment offers: VITE_THEMES=garden,gig (all when unset).
 let configured: string = %raw(`import.meta.env.VITE_THEMES ?? ""`)
 
 let themes = {

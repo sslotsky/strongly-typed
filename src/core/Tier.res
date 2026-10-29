@@ -1,4 +1,4 @@
-// A difficulty tier: the pace a theme offers (models, winds, tempos...).
+// A difficulty tier: the pace a theme offers (winds, tempos...).
 type t = {
   id: string,
   name: string,

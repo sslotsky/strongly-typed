@@ -67,7 +67,7 @@ module Kbd = {
 module TierPicker = {
   @react.component
   let make = (~tiers: array<Tier.t>, ~selected: Tier.t, ~label, ~onSelect) =>
-    <div className="models" role="radiogroup" ariaLabel=label>
+    <div className="tiers" role="radiogroup" ariaLabel=label>
       {tiers
       ->Array.mapWithIndex((tier, i) => {
         let active = tier.id == selected.id
@@ -75,15 +75,15 @@ module TierPicker = {
           key={tier.id}
           role="radio"
           ariaChecked={active ? #"true" : #"false"}
-          className={`models__option${active ? " models__option--active" : ""}`}
+          className={`tiers__option${active ? " tiers__option--active" : ""}`}
           onClick={_ => onSelect(tier)}
         >
-          <span className="models__name">
+          <span className="tiers__name">
             <Kbd> {Int.toString(i + 1)->React.string} </Kbd>
             {tier.name->React.string}
           </span>
-          <span className="models__blurb"> {tier.blurb->React.string} </span>
-          <span className="models__multiplier">
+          <span className="tiers__blurb"> {tier.blurb->React.string} </span>
+          <span className="tiers__multiplier">
             {`${Int.toString(tier.scoreMultiplier)}x score`->React.string}
           </span>
         </button>

@@ -131,12 +131,14 @@ describe("Engine.typeKey", () => {
         word(~id=1, ~text="GitHub"),
         word(~id=2, ~text="Slack"),
         word(~id=3, ~text="Jira"),
-      ])->withBonus(bonusSpec(~word="gateway", ~kind=ClearAll))
-    let (state, _) = state->typeAll("gateway")
+      ])->withBonus(bonusSpec(~word="everything", ~kind=ClearAll))
+    let (state, _) = state->typeAll("everything")
     expect(Array.length(state.words))->toBe(0)
     expect(state.bonus)->toEqual(None)
     expect(state.captures)->toBe(3)
-    expect(state.audit.rows->Array.map(row => (row.term, row.granted)))->toEqual([("gateway", 1)])
+    expect(state.audit.rows->Array.map(row => (row.term, row.granted)))->toEqual([
+      ("everything", 1),
+    ])
   })
 
   test("a slow-time bonus slows falling words for its duration", () => {

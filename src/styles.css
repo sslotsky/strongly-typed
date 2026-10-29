@@ -274,3 +274,33 @@ html, body, #root { margin: 0; height: 100%; background: #06070a; color: var(--i
 .theme-garden .prompt__input { color: var(--accent-bright); }
 .theme-garden .audit__term, .theme-garden .audit__row { font-family: Fraunces, Georgia, serif; }
 .garden-logo { width: 22px; height: 22px; flex: none; }
+.theme-gig .window { box-shadow: 0 30px 80px rgba(10, 4, 12, 0.65), 0 0 120px rgba(255, 179, 71, 0.2); }
+.theme-gig .overlay { background: radial-gradient(ellipse at center, rgba(23, 13, 22, 0.75), rgba(23, 13, 22, 0.93)); }
+.theme-gig .overlay__title {
+  font-family: Fraunces, Georgia, serif;
+  font-style: italic;
+  background: linear-gradient(90deg, #ffb347, #d9a441, #6fd3c4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.theme-gig .overlay__heading { font-family: Fraunces, Georgia, serif; font-style: italic; }
+.theme-gig .meter { background: #3a2a2a; }
+.theme-gig .meter__fill { background: linear-gradient(90deg, #d9a441, #ffe2a8); }
+.theme-gig .audit__term { font-family: Fraunces, Georgia, serif; font-style: italic; }
+.gig-logo, .kitchen-logo { width: 22px; height: 22px; flex: none; }
+.theme-kitchen .window { box-shadow: 0 30px 80px rgba(10, 6, 2, 0.65), 0 0 120px rgba(255, 138, 61, 0.22); }
+.theme-kitchen .overlay { background: radial-gradient(ellipse at center, rgba(28, 23, 20, 0.75), rgba(28, 23, 20, 0.93)); }
+.theme-kitchen .overlay__title {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, #ffc15e, #ff8a3d, #c0392b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.theme-kitchen .meter { background: #4b4441; }
+.theme-kitchen .meter__fill { background: linear-gradient(90deg, #b8401c, #ffc15e); }
+.theme-gig { --accent: #d9a441; --accent-bright: #ffb347; }
+.theme-kitchen { --accent: #c0392b; --accent-bright: #ff8a3d; }

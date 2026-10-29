@@ -5,4 +5,4 @@
 [build.environment]
   NODE_VERSION = "24"
   # Themes this site offers, in switcher order. Unset offers every theme.
-  VITE_THEMES = "garden"
+  VITE_THEMES = "garden,gig,kitchen"

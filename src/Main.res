@@ -3,6 +3,8 @@
 %%raw(`import "@fontsource/jetbrains-mono/700.css"`)
 %%raw(`import "@fontsource/fraunces/500.css"`)
 %%raw(`import "@fontsource/fraunces/700.css"`)
+%%raw(`import "@fontsource/fraunces/600-italic.css"`)
+%%raw(`import "@fontsource/fraunces/700-italic.css"`)
 %%raw(`import "./styles.css"`)
 
 switch ReactDOM.querySelector("#root") {

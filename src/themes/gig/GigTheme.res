@@ -512,6 +512,7 @@ let theme: Theme.t = {
     measure,
     base: drawFootlights,
     makeBackdrop: makeClub,
+    makeScene: GigScene.make,
   },
   sound,
 }

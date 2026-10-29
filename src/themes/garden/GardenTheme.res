@@ -455,6 +455,7 @@ let theme: Theme.t = {
     measure,
     base: drawLawn,
     makeBackdrop: (~width, ~height, ~window) => Yard.make(~width, ~height, ~window),
+    makeScene: GardenScene.make,
   },
   sound,
 }

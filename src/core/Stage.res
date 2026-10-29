@@ -23,9 +23,37 @@ type fx = {
   mutable missed: array<(int, float)>,
   mutable breachFlash: float,
   mutable ring: option<(float, float, float)>,
+  mutable shake: float,
+  mutable scene: option<Theme.scene>,
 }
 
-let makeFx = () => {particles: [], labels: [], missed: [], breachFlash: 0.0, ring: None}
+let reducedMotion: unit => bool = %raw(`() =>
+  typeof window !== "undefined" && !!window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches`)
+
+let makeFx = (theme: Theme.t) => {
+  let fx = {
+    particles: [],
+    labels: [],
+    missed: [],
+    breachFlash: 0.0,
+    ring: None,
+    shake: 0.0,
+    scene: None,
+  }
+  fx.scene =
+    theme.look.makeScene->Option.map(make =>
+      make({
+        width,
+        height,
+        shake: strength =>
+          if !reducedMotion() {
+            fx.shake = Math.max(fx.shake, Math.min(1.0, strength))
+          },
+      })
+    )
+  fx
+}
 
 let pick = arr => arr->Array.getUnsafe(Float.toInt(Math.random() *. Int.toFloat(Array.length(arr))))
 
@@ -49,6 +77,7 @@ let center = (word: Engine.word) => (word.x +. word.width /. 2.0, word.y -. chip
 
 let onEvent = (fx, theme: Theme.t, event: Engine.event) => {
   let look = theme.look
+  fx.scene->Option.forEach(scene => scene.onEvent(event))
   switch event {
   | Captured(word) =>
     let (x, y) = center(word)
@@ -83,6 +112,8 @@ let onEvent = (fx, theme: Theme.t, event: Engine.event) => {
 }
 
 let update = (fx, dt) => {
+  fx.scene->Option.forEach(scene => scene.update(dt))
+  fx.shake = Math.max(0.0, fx.shake -. dt *. 2.2)
   fx.particles =
     fx.particles->Array.filter(p => {
       p.x = p.x +. p.vx *. dt
@@ -177,6 +208,11 @@ let draw = (ctx, ~dpr, ~theme: Theme.t, ~state: Engine.state, ~fx, ~time) => {
   let look = theme.look
   ctx->setTransform(dpr, 0.0, 0.0, dpr, 0.0, 0.0)
   look.background(ctx, ~width, ~height, ~time)
+  if fx.shake > 0.0 {
+    let amount = 9.0 *. fx.shake *. fx.shake
+    ctx->translate((Math.random() -. 0.5) *. amount, (Math.random() -. 0.5) *. amount)
+  }
+  fx.scene->Option.forEach(scene => scene.drawBack(ctx, ~time))
   state.words->Array.forEach(word =>
     look.word(
       ctx,
@@ -192,4 +228,5 @@ let draw = (ctx, ~dpr, ~theme: Theme.t, ~state: Engine.state, ~fx, ~time) => {
   }
   look.base(ctx, state.shield, ~y=height -. Engine.shieldHeight)
   ctx->drawFx(theme, fx)
+  fx.scene->Option.forEach(scene => scene.drawFront(ctx, ~time))
 }

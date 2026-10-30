@@ -1,8 +1,9 @@
-// The base along the bottom of the playfield: a fixed row of cells.
-// A word that reaches it untyped breaches the cells beneath it.
-type t = {cells: array<bool>, width: float}
+// The base along the bottom of the playfield: a fixed row of cells spanning
+// `width` from `left`. A word that reaches it untyped breaches the cells
+// beneath it; one that lands wholly outside it breaches nothing.
+type t = {cells: array<bool>, left: float, width: float}
 
-let make = (~cells, ~width) => {cells: Array.make(~length=cells, true), width}
+let make = (~cells, ~left=0.0, ~width) => {cells: Array.make(~length=cells, true), left, width}
 
 let cellWidth = shield => shield.width /. Int.toFloat(Array.length(shield.cells))
 
@@ -16,10 +17,12 @@ let cellRange = (shield, ~left, ~right) => {
 
 // Returns the new shield and how many intact cells were breached.
 let breach = (shield, ~left, ~right) => {
+  let (left, right) = (left -. shield.left, right -. shield.left)
+  let overlaps = right > 0.0 && left < shield.width
   let (first, final) = shield->cellRange(~left, ~right)
   let breached = ref(0)
   let cells = shield.cells->Array.mapWithIndex((intact, i) =>
-    if intact && i >= first && i <= final {
+    if overlaps && intact && i >= first && i <= final {
       breached := breached.contents + 1
       false
     } else {

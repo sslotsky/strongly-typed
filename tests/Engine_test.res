@@ -18,6 +18,7 @@ let config: Engine.config = {
   width: 100.0,
   height: 100.0,
   shieldCells: 10,
+  baseInset: 0.0,
   measure: text => Int.toFloat(String.length(text)) *. 10.0,
   random: () => 0.0,
   rules: {vocabulary: ["abc"], bonuses: []},
@@ -57,6 +58,17 @@ describe("Shield", () => {
     let (shield, again) = shield->Shield.breach(~left=20.0, ~right=45.0)
     expect(again)->toBe(1)
     expect(Shield.intactCount(shield))->toBe(6)
+  })
+
+  test("an inset base breaches by its own position, and not outside it", () => {
+    let shield = Shield.make(~cells=10, ~left=20.0, ~width=100.0)
+    let (shield, edge) = shield->Shield.breach(~left=0.0, ~right=25.0)
+    expect(edge)->toBe(1)
+    expect(shield.cells->Array.getUnsafe(0))->toBe(false)
+    let (shield, margin) = shield->Shield.breach(~left=125.0, ~right=140.0)
+    expect(margin)->toBe(0)
+    let (_, before) = shield->Shield.breach(~left=0.0, ~right=20.0)
+    expect(before)->toBe(0)
   })
 
   test("is down once every cell is breached", () => {

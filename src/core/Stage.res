@@ -226,7 +226,10 @@ let draw = (ctx, ~dpr, ~theme: Theme.t, ~state: Engine.state, ~fx, ~time) => {
   | Some(bonus) => ctx->drawBonus(theme, bonus, ~input=state.input, ~time)
   | None => ()
   }
+  ctx->save
+  ctx->translate(state.shield.left, 0.0)
   look.base(ctx, state.shield, ~y=height -. Engine.shieldHeight)
+  ctx->restore
   ctx->drawFx(theme, fx)
   fx.scene->Option.forEach(scene => scene.drawFront(ctx, ~time))
 }

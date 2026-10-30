@@ -142,6 +142,7 @@ let make = (~themes: array<Theme.t>) => {
         width: Stage.width,
         height: Stage.height,
         shieldCells: 44,
+        baseInset: 80.0,
         measure: text => theme.look.measure(fieldCtx, text),
         random: Math.random,
         rules: Theme.rules(theme),

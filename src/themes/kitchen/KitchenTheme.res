@@ -442,6 +442,7 @@ let theme: Theme.t = {
       fill="#ff8a3d"
     />
   </svg>,
+  favicon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1f1512"/><path d="M12 2c1 3 4 4 4 8a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-4 0-7zM4 16h16v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-2z" fill="#ff8a3d" transform="translate(2.4 2.4) scale(.8)"/></svg>`,
   copy: {
     appName: "strongly-typed",
     crumb: "low & slow",

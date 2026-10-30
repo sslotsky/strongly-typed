@@ -455,6 +455,7 @@ let theme: Theme.t = {
   logo: <svg className="gig-logo" viewBox="0 0 24 24" ariaHidden=true>
     <path d="M9 3h10v3H12v10.5A3.5 3.5 0 1 1 9 13V3z" fill="#ffb347" />
   </svg>,
+  favicon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1d1420"/><path d="M9 3h10v3H12v10.5A3.5 3.5 0 1 1 9 13V3z" fill="#ffb347" transform="translate(2.4 2.4) scale(.8)"/></svg>`,
   copy: {
     appName: "strongly-typed",
     crumb: "the gig",

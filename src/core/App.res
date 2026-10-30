@@ -357,6 +357,10 @@ let make = (~themes: array<Theme.t>) => {
   // A theme switch resets the game; mirror that in the HUD and log.
   React.useEffect1(() => {
     setDocumentTitle(theme.copy.title)
+    theme.favicon->Option.forEach(Site.setFavicon)
+    if Array.length(themes) > 1 {
+      Site.showInUrl(theme.id)
+    }
     setHud(_ => freshHud(theme))
     setAudit(_ => Audit.empty)
     None

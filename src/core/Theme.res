@@ -71,6 +71,7 @@ type look = {
   word: (Canvas2d.t, Engine.word, ~input: string, ~missed: bool, ~time: float) => unit,
   // The full width a word occupies on the playfield (used for collisions).
   measure: (Canvas2d.t, string) => float,
+  // Drawn with x = 0 at the base's left edge (`Shield.t.left` on the playfield).
   base: (Canvas2d.t, Shield.t, ~y: float) => unit,
   makeBackdrop: (~width: float, ~height: float, ~window: Dom2.rect) => backdrop,
   makeScene?: stage => scene,

@@ -32,6 +32,9 @@ type config = {
   width: float,
   height: float,
   shieldCells: int,
+  // Playfield margin on each side the base doesn't reach. Words spawn fully on
+  // screen, so a base running edge to edge leaves its end cells nearly unhittable.
+  baseInset: float,
   measure: string => float,
   random: unit => float,
   rules: rules,
@@ -61,7 +64,11 @@ let slowFactor = 0.4
 let init = (~tier=Tier.standard, config) => {
   words: [],
   input: "",
-  shield: Shield.make(~cells=config.shieldCells, ~width=config.width),
+  shield: Shield.make(
+    ~cells=config.shieldCells,
+    ~left=config.baseInset,
+    ~width=config.width -. 2.0 *. config.baseInset,
+  ),
   bonus: None,
   audit: Audit.empty,
   score: 0,
